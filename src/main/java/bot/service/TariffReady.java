@@ -13,6 +13,10 @@ public class TariffReady {
     private final int price;
     private final String shortDesc;
 
+    public String getName() {
+        return name;
+    }
+
     private final List<Equip> equip;
     private final List<Extra> extra;
     private final List<Service> services;
@@ -30,34 +34,33 @@ public class TariffReady {
 
     public String toString(){
         StringBuilder equipF = new StringBuilder();
-        equipF.append("Оборудование: ");
+        equipF.append("Оборудование: \n");
         for(Equip e:equip){
             equipF.append(e.getValue() + "\n");
         }
         StringBuilder extraF = new StringBuilder();
-        extraF.append(extra.size()==0?"":"Дополнительно: ");
+        extraF.append(extra.size()==0?"":"Дополнительно: \n");
         for(Extra e :extra){
             extraF.append(e.getValue() + "\n");
         }
         StringBuilder serviceF = new StringBuilder();
-        serviceF.append("Сервисы: ");
+        serviceF.append("Сервисы: \n");
         for(Service s:services){
-            serviceF.append(s.getName() + "\n" +
-                    s.getValue() + "\n");
+            serviceF.append(s.getName() + " " + s.getValue() + "\n");
         }
         StringBuilder tagsF = new StringBuilder();
         tagsF.append("Теги: ");
         for(Tags t:tags){
-            tagsF.append(t.getName() + "\n");
+            tagsF.append(t.getName() + " ");
         }
 
         return "Название тарифа: " + name + "\n" +
                 "Цена: " + price + "\n" +
-                shortDesc +
+                shortDesc + "\n" +
                 equipF +
                 extraF +
                 serviceF +
-                tagsF;
+                tagsF + "\n";
     }
 
     public static class TariffBuilder{

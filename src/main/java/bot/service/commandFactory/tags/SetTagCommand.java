@@ -18,6 +18,11 @@ public class SetTagCommand implements Command {
     }
 
     @Override
+    public void setArgs(String... args) {
+
+    }
+
+    @Override
     public String getName() {
         return null;
     }

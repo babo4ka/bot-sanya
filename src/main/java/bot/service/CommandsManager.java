@@ -27,9 +27,14 @@ public class CommandsManager {
         return names;
     }
 
+    public void setArgs(String command, String... args){
+        commands.get(command).setArgs(args);
+    }
+
     public void setCommands(){
         commands.put("/start", createCommand("start").setCommand());
         commands.put("/consultation", createCommand("consultation").setCommand());
+        commands.put("/showTariffs", createCommand("showTariffs").setCommand());
     }
 
     public CommandsManager(){

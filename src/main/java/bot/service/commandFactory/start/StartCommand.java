@@ -38,6 +38,11 @@ public class StartCommand implements Command {
         return sendMessage;
     }
 
+    @Override
+    public void setArgs(String... args) {
+
+    }
+
     private InlineKeyboardMarkup setKeyboard(){
         InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
 

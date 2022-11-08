@@ -72,6 +72,12 @@ public class BotSanya extends TelegramLongPollingBot {
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
                 serviceInterData, tagsInterData
         );
+
+        List<TariffReady> tr = dataManager.getAlltariffs();
+
+        String[] args = new String[tr.size()];
+
+        manager.setArgs("/consultation", args);
     }
 
     public BotSanya(BotConfig config){
@@ -90,9 +96,15 @@ public class BotSanya extends TelegramLongPollingBot {
     }
 
 
-
+    boolean loaded = false;
     @Override
     public void onUpdateReceived(Update update) {
+        if(!loaded){
+            loadData();
+            loaded = true;
+        }
+
+        System.out.println(dataManager.getAlltariffs());
 
         if(update.hasMessage() && update.getMessage().hasText()){
             SendMessage sm = manager.executeCommand

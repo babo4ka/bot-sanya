@@ -91,9 +91,11 @@ public class DataManager {
             }
 
             List<Extra> extra = new ArrayList<>();
-            List<Extra_inter> extra_inter = new ArrayList<>();
+            List<Extra_inter> extra_inter;
 
             if(extraData.size() != 0){
+                extra_inter = extraInterData.stream()
+                        .filter(e->e.getTariff_id() == tariff.getID()).toList();
                 for(Extra_inter ei : extra_inter){
                     for(Extra e : extraData){
                         if(e.getID() == ei.getExtra_id()){

@@ -6,6 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class ShowTariffsCommand implements Command {
 
+    private final String name = "/showtariffs";
+
+    private final String[] args = {"alltariffs", "wifi", "tv", "mobile"};
 
     @Override
     public String[] getArgs() {
@@ -14,7 +17,16 @@ public class ShowTariffsCommand implements Command {
 
     @Override
     public SendMessage execute(Update update, String... args) {
+
+
         return null;
+    }
+
+
+
+
+    @Override
+    public void setArgs(String... args) {
     }
 
     @Override

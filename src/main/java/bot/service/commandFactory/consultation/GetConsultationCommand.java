@@ -18,6 +18,12 @@ public class GetConsultationCommand implements Command {
 
     private List<String> tariffsArgs = new ArrayList<>();
 
+    public void setArgs(String...args){
+        for(int i=0;i< args.length;i++){
+            tariffsArgs.add(args[i]);
+        }
+    }
+
     public GetConsultationCommand(){
         this.args = new String[]{"alltariffs"};
         this.tariffsArgs.add("alltariffs");
