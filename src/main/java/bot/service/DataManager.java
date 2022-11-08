@@ -2,6 +2,7 @@ package bot.service;
 
 import bot.database.entites.*;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,31 @@ public class DataManager {
     List<Service_inter> serviceInterData = new ArrayList<>();
     List<Tags_inter> tagsInterData = new ArrayList<>();
 
+    public static DataManager instance;
 
-    public DataManager(List<Equip> equipData,
+    public static DataManager getInstance(){
+        return instance;
+    }
+
+    public static DataManager getInstance(List<Equip> equipData,
+                                          List<Extra> extraData,
+                                          List<Service> serviceData,
+                                          List<Tags> tagsData,
+                                          List<Tariff> tariffsData,
+                                          List<Equip_inter> equipInterData,
+                                          List<Extra_inter> extraInterData,
+                                          List<Service_inter> serviceInterData,
+                                          List<Tags_inter> tagsInterData){
+        if(instance == null) {
+            instance = new DataManager(
+                    equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
+                    serviceInterData, tagsInterData
+            );
+        }
+            return instance;
+    }
+
+    private DataManager(List<Equip> equipData,
                        List<Extra> extraData,
                        List<Service> serviceData,
                        List<Tags> tagsData,

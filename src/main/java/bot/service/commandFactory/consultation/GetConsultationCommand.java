@@ -20,6 +20,7 @@ public class GetConsultationCommand implements Command {
 
     public void setArgs(String...args){
         for(int i=0;i< args.length;i++){
+            System.out.println(args[i]);
             tariffsArgs.add(args[i]);
         }
     }
@@ -35,10 +36,11 @@ public class GetConsultationCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update, String... args) {
+    public List<SendMessage> execute(Update update, String... args) {
         if(args.length == 0)return null;
+        System.out.println(args[1]);
         if(!tariffsArgs.contains(args[1]))return null;
-
+        List<SendMessage> sms = new ArrayList<>();
         SendMessage sm = new SendMessage();
 
         sm.setText("Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
@@ -57,8 +59,8 @@ public class GetConsultationCommand implements Command {
         keyboardMarkup.setKeyboard(btns);
 
         sm.setReplyMarkup(keyboardMarkup);
-
-        return sm;
+        sms.add(sm);
+        return sms;
     }
 
 

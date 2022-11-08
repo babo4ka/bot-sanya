@@ -41,7 +41,18 @@ public class CommandsManager {
         setCommands();
     }
 
-    public SendMessage executeCommand(Update update, String... commandAndArgs){
+    public List<SendMessage> executeCommand(Update update, String... commandAndArgs){
+        String [] args = commandAndArgs;
+        if(commandAndArgs[0].equals("/consultation")){
+            StringBuilder subArgs = new StringBuilder();
+            for(int i=1;i<args.length;i++){
+                subArgs.append(args[i] + (i< args.length-1?" ":""));
+            }
+            args = new String[2];
+            args[0] = commandAndArgs[0];
+            args[1] = subArgs.toString();
+        }
+        commandAndArgs = args;
         return commands.get(commandAndArgs[0]).execute(update, commandAndArgs);
     }
 

@@ -4,6 +4,8 @@ import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
+
 public class SetTagCommand implements Command {
 
 
@@ -13,7 +15,7 @@ public class SetTagCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update, String... args) {
+    public List<SendMessage> execute(Update update, String... args) {
         return null;
     }
 

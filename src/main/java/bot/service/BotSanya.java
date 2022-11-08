@@ -68,7 +68,7 @@ public class BotSanya extends TelegramLongPollingBot {
         serviceInterRepository.findAll().forEach(serviceInterData::add);
         tagsInterRepository.findAll().forEach(tagsInterData::add);
 
-        this.dataManager = new DataManager(
+        this.dataManager = DataManager.getInstance(
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
                 serviceInterData, tagsInterData
         );
@@ -76,6 +76,10 @@ public class BotSanya extends TelegramLongPollingBot {
         List<TariffReady> tr = dataManager.getAlltariffs();
 
         String[] args = new String[tr.size()];
+
+        for(int i=0;i<args.length;i++){
+            args[i] = tr.get(i).getName();
+        }
 
         manager.setArgs("/consultation", args);
     }
@@ -104,24 +108,27 @@ public class BotSanya extends TelegramLongPollingBot {
             loaded = true;
         }
 
-        System.out.println(dataManager.getAlltariffs());
 
         if(update.hasMessage() && update.getMessage().hasText()){
-            SendMessage sm = manager.executeCommand
+            List<SendMessage> sms = manager.executeCommand
                     (update, update.getMessage().getText());
             try {
-                execute(sm);
+                for(SendMessage sm: sms){
+                    execute(sm);
+                }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
         }
 
         if(update.hasCallbackQuery()){
-            SendMessage sm = manager.executeCommand(
+            List<SendMessage> sms = manager.executeCommand(
                     update, update.getCallbackQuery().getData().split(" ")
             );
             try {
-                execute(sm);
+                for(SendMessage sm: sms){
+                    execute(sm);
+                }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }

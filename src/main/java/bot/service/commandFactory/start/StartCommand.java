@@ -26,7 +26,8 @@ public class StartCommand implements Command {
     }
 
     @Override
-    public SendMessage execute(Update update, String...args) {
+    public List<SendMessage> execute(Update update, String...args) {
+        List<SendMessage> sms = new ArrayList<>();
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         System.out.println(update);
@@ -35,7 +36,8 @@ public class StartCommand implements Command {
         sendMessage.setText(info);
 
         sendMessage.setReplyMarkup(setKeyboard());
-        return sendMessage;
+        sms.add(sendMessage);
+        return sms;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class StartCommand implements Command {
 
         rows.add(new InlineKeyboardButton().builder()
                 .text("покажи все тарифы")
-                .callbackData("/showTariffs")
+                .callbackData("/showTariffs alltariffs")
                 .build());
         btns.add(rows);
         rows = new ArrayList<>();
