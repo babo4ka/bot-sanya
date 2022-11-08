@@ -53,7 +53,7 @@ public class StartCommand implements Command {
 
         rows.add(new InlineKeyboardButton().builder()
                 .text("покажи все тарифы")
-                .callbackData("/showTariffs alltariffs")
+                .callbackData("/showTariffs")
                 .build());
         btns.add(rows);
         rows = new ArrayList<>();

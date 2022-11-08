@@ -22,6 +22,30 @@ public class TariffReady {
     private final List<Service> services;
     private final List<Tags> tags;
 
+    public int getPrice() {
+        return price;
+    }
+
+    public String getShortDesc() {
+        return shortDesc;
+    }
+
+    public List<Equip> getEquip() {
+        return equip;
+    }
+
+    public List<Extra> getExtra() {
+        return extra;
+    }
+
+    public List<Service> getServices() {
+        return services;
+    }
+
+    public List<Tags> getTags() {
+        return tags;
+    }
+
     private TariffReady(TariffBuilder builder) {
         this.name = builder.name;
         this.price = builder.price;

@@ -13,53 +13,52 @@ public class GetConsultationCommand implements Command {
 
     private final String name = "/consultation";
 
-
-    private final String[] args;
-
     private List<String> tariffsArgs = new ArrayList<>();
 
     public void setArgs(String...args){
         for(int i=0;i< args.length;i++){
-            System.out.println(args[i]);
             tariffsArgs.add(args[i]);
         }
     }
 
     public GetConsultationCommand(){
-        this.args = new String[]{"alltariffs"};
         this.tariffsArgs.add("alltariffs");
     }
 
     @Override
     public String[] getArgs() {
-        return this.args;
+        return this.tariffsArgs.toArray(new String[0]);
     }
 
     @Override
     public List<SendMessage> execute(Update update, String... args) {
-        if(args.length == 0)return null;
-        System.out.println(args[1]);
-        if(!tariffsArgs.contains(args[1]))return null;
         List<SendMessage> sms = new ArrayList<>();
         SendMessage sm = new SendMessage();
 
-        sm.setText("Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
-        sm.enableMarkdown(true);
-        sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
-                :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> rows = new ArrayList<>();
-        List<List<InlineKeyboardButton>> btns = new ArrayList<>();
+        if(args.length == 0 || !tariffsArgs.contains(args[1])){
+            sm.setText("Неправильные аргументы для этой команды");
+            sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
+                    :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        }else{
+            sm.setText("Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
+            sm.enableMarkdown(true);
+            sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
+                    :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        }
+            InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+            List<InlineKeyboardButton> rows = new ArrayList<>();
+            List<List<InlineKeyboardButton>> btns = new ArrayList<>();
 
-        rows.add(new InlineKeyboardButton().builder()
-                .text("вернуться в начало")
-                .callbackData("/start").build());
-        btns.add(rows);
+            rows.add(new InlineKeyboardButton().builder()
+                    .text("вернуться в начало")
+                    .callbackData("/start").build());
+            btns.add(rows);
 
-        keyboardMarkup.setKeyboard(btns);
+            keyboardMarkup.setKeyboard(btns);
 
-        sm.setReplyMarkup(keyboardMarkup);
-        sms.add(sm);
+            sm.setReplyMarkup(keyboardMarkup);
+            sms.add(sm);
+
         return sms;
     }
 
