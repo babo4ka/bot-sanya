@@ -16,6 +16,17 @@ public class Service {
     @Column(name = "значение_сервиса")
     private String value;
 
+    @Column(name ="эмодзи")
+    private String emoji;
+
+    public String getEmoji() {
+        return emoji;
+    }
+
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
+    }
+
     public long getID() {
         return ID;
     }

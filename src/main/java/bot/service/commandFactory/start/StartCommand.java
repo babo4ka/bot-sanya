@@ -13,12 +13,13 @@ public class StartCommand implements Command {
 
     private final String name = "/start";
 
-    private final String info = "Ведущий специалист по домашним услугам ПАО МТС Александр\n" +
-            "Агент группы продаж, работаю в компании пятый год, суммарно через меня подключилось более 1000 квартир\n" +
-            "Веду работу по республике Татарстан\n" +
-            "8 - 917 - 292 - 84 - 45\n" +
-            "ссылка на тг\n" +
-            "А я его бот-помощник:) через меня вы вкратце можете узнать интересующую Вас информацию";
+    private final String info = "&#128129;Ведущий специалист по домашним услугам ПАО МТС Александр\n" +
+            "Агент группы продаж, работаю в компании пятый год, суммарно через меня подключилось более 1000 квартир\n\n" +
+            "&#128205;Веду работу по республике Татарстан\n\n" +
+            "&#128222;Можете позвонить мне по номеру <strong>8 - 917 - 292 - 84 - 45</strong>\n" +
+            "&#128233;Или написать мне в телеграме @ссылка\n\n" +
+            "&#129470;А я его бот-помощник:) через меня вы вкратце можете узнать интересующую Вас информацию\n" +
+            "Могу показать Вам тарифы или же сообщу Александру, чтобы он связался с Вами и обсудил все тарифы";
 
     @Override
     public String[] getArgs() {
@@ -30,13 +31,14 @@ public class StartCommand implements Command {
         List<SendMessage> sms = new ArrayList<>();
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        System.out.println(update);
         sendMessage.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
                 :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
         sendMessage.setText(info);
 
         sendMessage.setReplyMarkup(setKeyboard());
+        sendMessage.setParseMode("HTML");
         sms.add(sendMessage);
+
         return sms;
     }
 

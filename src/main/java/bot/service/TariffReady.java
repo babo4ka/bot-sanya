@@ -13,6 +13,7 @@ public class TariffReady {
     private final int price;
     private final String shortDesc;
 
+
     public String getName() {
         return name;
     }
@@ -58,19 +59,19 @@ public class TariffReady {
 
     public String toString(){
         StringBuilder equipF = new StringBuilder();
-        equipF.append("Оборудование: \n");
+        equipF.append("&#9881;Оборудование: \n");
         for(Equip e:equip){
             equipF.append(e.getValue() + "\n");
         }
         StringBuilder extraF = new StringBuilder();
-        extraF.append(extra.size()==0?"":"Дополнительно: \n");
+        extraF.append(extra.size()==0?"":"&#10133;Дополнительно: \n");
         for(Extra e :extra){
             extraF.append(e.getValue() + "\n");
         }
         StringBuilder serviceF = new StringBuilder();
         serviceF.append("Сервисы: \n");
         for(Service s:services){
-            serviceF.append(s.getName() + " " + s.getValue() + "\n");
+            serviceF.append(s.getEmoji() + s.getName() + " " + s.getValue() + "\n");
         }
         StringBuilder tagsF = new StringBuilder();
         tagsF.append("Теги: ");
@@ -78,12 +79,12 @@ public class TariffReady {
             tagsF.append(t.getName() + " ");
         }
 
-        return "Название тарифа: " + name + "\n" +
-                "Цена: " + price + "\n" +
-                shortDesc + "\n" +
-                equipF +
-                extraF +
-                serviceF +
+        return name + "\n" +
+                "Цена: " + price + "\n\n" +
+                shortDesc + "\n\n" +
+                serviceF + "\n" +
+                equipF + "\n"+
+                extraF + "\n"+
                 tagsF + "\n";
     }
 
@@ -122,6 +123,7 @@ public class TariffReady {
             this.tags = tags;
             return this;
         }
+
 
         public TariffReady build(){
             return new TariffReady(this);

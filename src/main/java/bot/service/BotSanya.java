@@ -106,7 +106,9 @@ public class BotSanya extends TelegramLongPollingBot {
 
     boolean loaded = false;
     private long ownerId = 268932900;
-    private Map<Integer, Long> messagesToDelete = new HashMap<>();
+
+    private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
+
     @Override
     public void onUpdateReceived(Update update) {
         if(!loaded){
@@ -121,7 +123,8 @@ public class BotSanya extends TelegramLongPollingBot {
         Message sentMessage;
         if(update.hasMessage() && update.getMessage().hasText()){
             try {
-                deletePreviousMessages();
+                if(update.getMessage().getChatId() != ownerId)
+                    deletePreviousMessages(update.getMessage().getChatId());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
@@ -130,7 +133,7 @@ public class BotSanya extends TelegramLongPollingBot {
             try {
                 for(SendMessage sm: sms){
                     sentMessage = execute(sm);
-                    messagesToDelete.put(sentMessage.getMessageId(), sentMessage.getChatId());
+                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -139,7 +142,8 @@ public class BotSanya extends TelegramLongPollingBot {
 
         if(update.hasCallbackQuery()){
             try {
-                deletePreviousMessages();
+                if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
+                    deletePreviousMessages(update.getCallbackQuery().getMessage().getChatId());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
@@ -149,7 +153,7 @@ public class BotSanya extends TelegramLongPollingBot {
             try {
                 for(SendMessage sm: sms){
                     sentMessage = execute(sm);
-                    messagesToDelete.put(sentMessage.getMessageId(), sentMessage.getChatId());
+                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -158,13 +162,19 @@ public class BotSanya extends TelegramLongPollingBot {
 
     }
 
-    private void deletePreviousMessages() throws TelegramApiException {
+    private void deletePreviousMessages(long chatId) throws TelegramApiException {
         DeleteMessage msg = new DeleteMessage();
-        for(Integer i :messagesToDelete.keySet()){
-            msg.setMessageId(i);
-            msg.setChatId(messagesToDelete.get(i));
-            execute(msg);
+
+        List<Integer> msgsIds = msgsToDelete.get(chatId);
+
+        if(msgsIds!=null){
+            for(Integer i :msgsIds){
+                msg.setMessageId(i);
+                msg.setChatId(chatId);
+                execute(msg);
+            }
         }
-        messagesToDelete.clear();
+
+        msgsToDelete.put(chatId, new ArrayList<>());
     }
 }

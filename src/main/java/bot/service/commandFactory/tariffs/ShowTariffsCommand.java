@@ -80,14 +80,19 @@ public class ShowTariffsCommand implements Command {
         List<InlineKeyboardButton> btns = new ArrayList<>();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("wifi")
+                .text("wifi " + (choosedTags.contains("wifi")?"x":"+"))
                 .callbackData("/showTariffs wifi").build());
         btns.add(new InlineKeyboardButton().builder()
-                .text("tv")
+                .text("tv " + (choosedTags.contains("tv")?"x":"+"))
                 .callbackData("/showTariffs tv").build());
         btns.add(new InlineKeyboardButton().builder()
-                .text("mobile")
+                .text("mobile " + (choosedTags.contains("mobile")?"x":"+"))
                 .callbackData("/showTariffs mobile").build());
+        rows.add(btns);
+        btns = new ArrayList<>();
+        btns.add(new InlineKeyboardButton().builder()
+                .text("вернуться в начало")
+                .callbackData("/start").build());
         rows.add(btns);
         keyboardMarkup.setKeyboard(rows);
         tagChoose.setReplyMarkup(keyboardMarkup);
@@ -97,6 +102,7 @@ public class ShowTariffsCommand implements Command {
 
     private SendMessage setMessageToSend(String chatId, TariffReady tr){
         SendMessage sm = new SendMessage();
+
         sm.setChatId(chatId);
         String text = tr.toString() + "\n" +
                 "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу";
@@ -115,7 +121,7 @@ public class ShowTariffsCommand implements Command {
 
         keyboardMarkup.setKeyboard(rows);
         sm.setReplyMarkup(keyboardMarkup);
-
+        sm.setParseMode("HTML");
         return sm;
     }
 

@@ -40,7 +40,7 @@ public class GetConsultationCommand implements Command {
             sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
                     :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
         }else{
-            sm.setText("Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
+            sm.setText("&#9989;Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
             sm.enableMarkdown(true);
             sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
                     :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
@@ -57,6 +57,7 @@ public class GetConsultationCommand implements Command {
             keyboardMarkup.setKeyboard(btns);
 
             sm.setReplyMarkup(keyboardMarkup);
+            sm.setParseMode("HTML");
             sms.add(sm);
 
 
