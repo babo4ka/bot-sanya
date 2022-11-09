@@ -4,6 +4,7 @@ import bot.service.commandFactory.consultation.GetConsultationCommandFactory;
 import bot.service.commandFactory.interfaces.Command;
 import bot.service.commandFactory.interfaces.CommandFactory;
 import bot.service.commandFactory.start.StartCommandFactory;
+import bot.service.commandFactory.subscribe.SubscribeCommandFactory;
 import bot.service.commandFactory.tariffs.ShowTariffsCommandFactory;
 import bot.service.commandFactory.unknown.UnknownCommandFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -37,6 +38,7 @@ public class CommandsManager {
         commands.put("/consultation", createCommand("consultation").setCommand());
         commands.put("/showTariffs", createCommand("showTariffs").setCommand());
         commands.put("/unknown", createCommand("unknown").setCommand());
+        commands.put("/subscribe", createCommand("subscribe").setCommand());
     }
 
     public CommandsManager(){
@@ -79,6 +81,10 @@ public class CommandsManager {
 
             case "unknown":
                 return new UnknownCommandFactory();
+
+            case "subscribe":
+                return new SubscribeCommandFactory();
+
             default:
                 return null;
         }

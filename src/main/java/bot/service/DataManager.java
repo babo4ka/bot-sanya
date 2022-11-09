@@ -67,7 +67,6 @@ public class DataManager {
     }
 
     List<TariffReady> alltariffs = new ArrayList<>();
-    List<TariffReady> actualTariffs = new ArrayList<>();
 
     public List<TariffReady> getAlltariffs() {
         return alltariffs;

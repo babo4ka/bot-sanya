@@ -36,6 +36,9 @@ public class BotSanya extends TelegramLongPollingBot {
     @Autowired
     TariffRepository tariffRepository;
     List<Tariff> tariffsData = new ArrayList<>();
+    @Autowired
+    SubsRepository subsRepository;
+    List<Subs> subsData = new ArrayList<>();
 
     //репозитории промежутков
     @Autowired
@@ -72,6 +75,8 @@ public class BotSanya extends TelegramLongPollingBot {
         serviceInterRepository.findAll().forEach(serviceInterData::add);
         tagsInterRepository.findAll().forEach(tagsInterData::add);
 
+        subsRepository.findAll().forEach(subsData::add);
+
         this.dataManager = DataManager.getInstance(
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
                 serviceInterData, tagsInterData
@@ -87,6 +92,8 @@ public class BotSanya extends TelegramLongPollingBot {
 
         manager.setArgs("/consultation", args);
     }
+
+
 
     public BotSanya(BotConfig config){
         this.config = config;
@@ -121,6 +128,7 @@ public class BotSanya extends TelegramLongPollingBot {
 
 
         Message sentMessage;
+
         if(update.hasMessage() && update.getMessage().hasText()){
             try {
                 if(update.getMessage().getChatId() != ownerId)
@@ -159,7 +167,6 @@ public class BotSanya extends TelegramLongPollingBot {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     private void deletePreviousMessages(long chatId) throws TelegramApiException {
