@@ -51,13 +51,14 @@ public class ShowTariffsCommand implements Command {
 
         List<TariffReady> tr = DataManager.getInstance().getAlltariffs();
         if(args.length == 1){
+            choosedTags.clear();
             for(TariffReady t:tr){
                 sms.add(setMessageToSend
                         (String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()),
                         t));
             }
         }else{
-            if(choosedTags.contains(args[1]))choosedTags.remove(args[1]);
+            if(choosedTags.contains(args[1]) && args[1] != null)choosedTags.remove(args[1]);
             else choosedTags.add(args[1]);
 
             for(TariffReady t:tr){

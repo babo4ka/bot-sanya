@@ -59,9 +59,21 @@ public class GetConsultationCommand implements Command {
             sm.setReplyMarkup(keyboardMarkup);
             sms.add(sm);
 
+
+            sms.add(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
+                    update.getCallbackQuery().getFrom().getUserName(), args[1]));
         return sms;
     }
 
+
+    private SendMessage messageForSanya(String clientUserName, String tariffName){
+        SendMessage sm = new SendMessage();
+        sm.setChatId(String.valueOf(268932900));
+        sm.setText("Консультация по тарифу " + tariffName + "\n" +
+                "@" + clientUserName);
+
+        return sm;
+    }
 
     @Override
     public String getName() {
