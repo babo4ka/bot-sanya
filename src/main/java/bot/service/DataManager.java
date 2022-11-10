@@ -20,6 +20,22 @@ public class DataManager {
     List<Service_inter> serviceInterData = new ArrayList<>();
     List<Tags_inter> tagsInterData = new ArrayList<>();
 
+    List<Subs> subsData = new ArrayList<>();
+
+    public boolean isSub(long chatId){
+        for(Subs s:subsData){
+            if(s.getID() == chatId)return true;
+        }
+        return false;
+    }
+
+    public void setSubsData(List<Subs> subsData) {
+        this.subsData = subsData;
+        for(Subs s: subsData){
+            System.out.println("manager: " + s.getID());
+        }
+    }
+
     public static DataManager instance;
 
     public static DataManager getInstance(){
@@ -34,11 +50,12 @@ public class DataManager {
                                           List<Equip_inter> equipInterData,
                                           List<Extra_inter> extraInterData,
                                           List<Service_inter> serviceInterData,
-                                          List<Tags_inter> tagsInterData){
+                                          List<Tags_inter> tagsInterData,
+                                          List<Subs> subsData){
         if(instance == null) {
             instance = new DataManager(
                     equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                    serviceInterData, tagsInterData
+                    serviceInterData, tagsInterData, subsData
             );
         }
             return instance;
@@ -52,7 +69,8 @@ public class DataManager {
                        List<Equip_inter> equipInterData,
                        List<Extra_inter> extraInterData,
                        List<Service_inter> serviceInterData,
-                       List<Tags_inter> tagsInterData) {
+                       List<Tags_inter> tagsInterData,
+                        List<Subs> subsData) {
         this.equipData = equipData;
         this.extraData = extraData;
         this.serviceData = serviceData;
@@ -62,6 +80,7 @@ public class DataManager {
         this.extraInterData = extraInterData;
         this.serviceInterData = serviceInterData;
         this.tagsInterData = tagsInterData;
+        this.subsData = subsData;
 
         setAllTariffs();
     }

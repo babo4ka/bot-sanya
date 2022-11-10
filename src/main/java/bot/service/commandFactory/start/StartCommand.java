@@ -1,5 +1,7 @@
 package bot.service.commandFactory.start;
 
+import bot.service.DataManager;
+import bot.service.DataUpdateListener;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -26,6 +28,11 @@ public class StartCommand implements Command {
         return new String[0];
     }
 
+    DataManager dataManager;
+    public void setDataManager(){
+        dataManager = DataManager.getInstance();
+    }
+
     @Override
     public List<SendMessage> execute(Update update, String...args) {
         List<SendMessage> sms = new ArrayList<>();
@@ -35,7 +42,8 @@ public class StartCommand implements Command {
                 :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
         sendMessage.setText(info);
 
-        sendMessage.setReplyMarkup(setKeyboard());
+        sendMessage.setReplyMarkup(setKeyboard(update.hasMessage()?update.getMessage().getChatId():
+                update.getCallbackQuery().getMessage().getChatId()));
         sendMessage.setParseMode("HTML");
         sms.add(sendMessage);
 
@@ -47,7 +55,7 @@ public class StartCommand implements Command {
 
     }
 
-    private InlineKeyboardMarkup setKeyboard(){
+    private InlineKeyboardMarkup setKeyboard(long chatId){
         InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
 
         List<InlineKeyboardButton> rows = new ArrayList<>();
@@ -56,6 +64,13 @@ public class StartCommand implements Command {
         rows.add(new InlineKeyboardButton().builder()
                 .text("покажи все тарифы")
                 .callbackData("/showTariffs")
+                .build());
+        btns.add(rows);
+        rows = new ArrayList<>();
+
+        rows.add(new InlineKeyboardButton().builder()
+                .text(dataManager.isSub(chatId)?"отписаться от новостного канала":"подписаться на новостной канал")
+                .callbackData("/subscribe")
                 .build());
         btns.add(rows);
         rows = new ArrayList<>();
@@ -74,4 +89,6 @@ public class StartCommand implements Command {
     public String getName() {
         return this.name;
     }
+
+
 }

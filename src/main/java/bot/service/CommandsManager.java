@@ -29,6 +29,10 @@ public class CommandsManager {
         return names;
     }
 
+    public Command getCommandByName(String name){
+        return commands.get(name);
+    }
+
     public void setArgs(String command, String... args){
         commands.get(command).setArgs(args);
     }

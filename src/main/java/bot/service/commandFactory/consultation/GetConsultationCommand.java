@@ -1,5 +1,6 @@
 package bot.service.commandFactory.consultation;
 
+import bot.service.DataUpdateListener;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -80,4 +81,6 @@ public class GetConsultationCommand implements Command {
     public String getName() {
         return this.name;
     }
+
+
 }

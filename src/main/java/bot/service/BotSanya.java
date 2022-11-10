@@ -3,6 +3,8 @@ package bot.service;
 import bot.config.BotConfig;
 import bot.database.entites.*;
 import bot.database.repositories.*;
+import bot.service.commandFactory.start.StartCommand;
+import bot.service.commandFactory.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class BotSanya extends TelegramLongPollingBot {
+public class BotSanya extends TelegramLongPollingBot implements DataUpdateListener{
 
     //репозитории сущностей
     @Autowired
@@ -79,7 +81,7 @@ public class BotSanya extends TelegramLongPollingBot {
 
         this.dataManager = DataManager.getInstance(
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                serviceInterData, tagsInterData
+                serviceInterData, tagsInterData, subsData
         );
 
         List<TariffReady> tr = dataManager.getAlltariffs();
@@ -91,6 +93,13 @@ public class BotSanya extends TelegramLongPollingBot {
         }
 
         manager.setArgs("/consultation", args);
+
+        SubscribeCommand sc = (SubscribeCommand) manager.getCommandByName("/subscribe");
+        sc.addObserver(this);
+        sc.setDataManager();
+
+        StartCommand stc = (StartCommand) manager.getCommandByName("/start");
+        stc.setDataManager();
     }
 
 
@@ -131,7 +140,7 @@ public class BotSanya extends TelegramLongPollingBot {
 
         if(update.hasMessage() && update.getMessage().hasText()){
             try {
-                if(update.getMessage().getChatId() != ownerId)
+                //if(update.getMessage().getChatId() != ownerId)
                     deletePreviousMessages(update.getMessage().getChatId());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -150,7 +159,7 @@ public class BotSanya extends TelegramLongPollingBot {
 
         if(update.hasCallbackQuery()){
             try {
-                if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
+                //if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
                     deletePreviousMessages(update.getCallbackQuery().getMessage().getChatId());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -183,5 +192,27 @@ public class BotSanya extends TelegramLongPollingBot {
         }
 
         msgsToDelete.put(chatId, new ArrayList<>());
+    }
+
+    @Override
+    public void update(String action, long chatId) {
+        subsData = new ArrayList<>();
+        Subs s;
+        switch (action){
+            case "subscribe":
+                s = new Subs();
+                s.setID(chatId);
+                subsRepository.save(s);
+                subsRepository.findAll().forEach(subsData::add);
+                break;
+
+            case "unsubscribe":
+                s = new Subs();
+                s.setID(chatId);
+                subsRepository.delete(s);
+                subsRepository.findAll().forEach(subsData::add);
+                break;
+        }
+        dataManager.setSubsData(subsData);
     }
 }
