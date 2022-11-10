@@ -22,6 +22,10 @@ public class DataManager {
 
     List<Subs> subsData = new ArrayList<>();
 
+    public List<Subs> getSubsData(){
+        return subsData;
+    }
+
     public boolean isSub(long chatId){
         for(Subs s:subsData){
             if(s.getID() == chatId)return true;
@@ -31,9 +35,6 @@ public class DataManager {
 
     public void setSubsData(List<Subs> subsData) {
         this.subsData = subsData;
-        for(Subs s: subsData){
-            System.out.println("manager: " + s.getID());
-        }
     }
 
     public static DataManager instance;

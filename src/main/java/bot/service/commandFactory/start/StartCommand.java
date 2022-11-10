@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-public class StartCommand implements Command {
+public class StartCommand implements Command{
 
     private final String name = "/start";
 
@@ -20,6 +20,8 @@ public class StartCommand implements Command {
             "&#128205;Веду работу по республике Татарстан\n\n" +
             "&#128222;Можете позвонить мне по номеру <strong>8 - 917 - 292 - 84 - 45</strong>\n" +
             "&#128233;Или написать мне в телеграме @ссылка\n\n" +
+            "&#128240;Вы также можете подписаться на мой новостной канал @ссылка\n" +
+            "Или же подписаться на рассылку и я Вам сам буду присылать новые посты оттуда\n\n" +
             "&#129470;А я его бот-помощник:) через меня вы вкратце можете узнать интересующую Вас информацию\n" +
             "Могу показать Вам тарифы или же сообщу Александру, чтобы он связался с Вами и обсудил все тарифы";
 
@@ -69,7 +71,7 @@ public class StartCommand implements Command {
         rows = new ArrayList<>();
 
         rows.add(new InlineKeyboardButton().builder()
-                .text(dataManager.isSub(chatId)?"отписаться от новостного канала":"подписаться на новостной канал")
+                .text(dataManager.isSub(chatId)?"отписаться от рассылки из новостного канала":"подписаться на рассылку из новостного канала")
                 .callbackData("/subscribe")
                 .build());
         btns.add(rows);

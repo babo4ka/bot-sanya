@@ -1,5 +1,6 @@
 package bot.service;
 
+import bot.service.commandFactory.SendPostCommand.SendPostCommandFactory;
 import bot.service.commandFactory.consultation.GetConsultationCommandFactory;
 import bot.service.commandFactory.interfaces.Command;
 import bot.service.commandFactory.interfaces.CommandFactory;
@@ -8,6 +9,7 @@ import bot.service.commandFactory.subscribe.SubscribeCommandFactory;
 import bot.service.commandFactory.tariffs.ShowTariffsCommandFactory;
 import bot.service.commandFactory.unknown.UnknownCommandFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -43,12 +45,12 @@ public class CommandsManager {
         commands.put("/showTariffs", createCommand("showTariffs").setCommand());
         commands.put("/unknown", createCommand("unknown").setCommand());
         commands.put("/subscribe", createCommand("subscribe").setCommand());
+        commands.put("/sendPost", createCommand("sendPost").setCommand());
     }
 
     public CommandsManager(){
         setCommands();
     }
-
     public List<SendMessage> executeCommand(Update update, String... commandAndArgs){
         String [] args = commandAndArgs;
         if(commandAndArgs[0].equals("/consultation")){
@@ -71,7 +73,6 @@ public class CommandsManager {
 
 
 
-
     private CommandFactory createCommand(String name){
         switch (name){
             case "start":
@@ -88,6 +89,9 @@ public class CommandsManager {
 
             case "subscribe":
                 return new SubscribeCommandFactory();
+
+            case "sendPost":
+                return new SendPostCommandFactory();
 
             default:
                 return null;

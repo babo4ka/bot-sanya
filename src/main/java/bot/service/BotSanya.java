@@ -3,21 +3,20 @@ package bot.service;
 import bot.config.BotConfig;
 import bot.database.entites.*;
 import bot.database.repositories.*;
+import bot.service.commandFactory.SendPostCommand.SendPostCommand;
 import bot.service.commandFactory.start.StartCommand;
 import bot.service.commandFactory.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class BotSanya extends TelegramLongPollingBot implements DataUpdateListener{
@@ -100,6 +99,9 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         StartCommand stc = (StartCommand) manager.getCommandByName("/start");
         stc.setDataManager();
+
+        SendPostCommand spc = (SendPostCommand) manager.getCommandByName("/sendPost");
+        spc.setDataManager();
     }
 
 
@@ -121,7 +123,9 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
 
     boolean loaded = false;
-    private long ownerId = 268932900;
+    private final long ownerId = 268932900;
+
+    private final String channelId = "-1001379659811";
 
     private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
 
@@ -134,7 +138,6 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 return;
             }
         }
-
 
         Message sentMessage;
 
@@ -174,6 +177,19 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
+            }
+        }
+
+        if(update.hasChannelPost()
+                && String.valueOf(update.getChannelPost().getChatId()).equals(channelId)){
+            List<SendMessage> sms = manager.executeCommand(update, "/sendPost");
+
+            for(SendMessage s: sms){
+                try {
+                    execute(s);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

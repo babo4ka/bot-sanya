@@ -31,9 +31,10 @@ public class SubscribeCommand implements Command, Observable{
 
     @Override
     public List<SendMessage> execute(Update update, String... args) {
+        System.out.println("executing sub");
         List<SendMessage> sms = new ArrayList<>();
         SendMessage sm = new SendMessage();
-        long chatId =update.hasMessage()?update.getMessage().getChatId():
+        long chatId = update.hasMessage()?update.getMessage().getChatId():
                 update.getCallbackQuery().getMessage().getChatId();
         sm.setChatId(String.valueOf(chatId));
 
@@ -43,20 +44,18 @@ public class SubscribeCommand implements Command, Observable{
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
         if(!dataManager.isSub(chatId)){
-            sm.setText("Отлично! Я буду держать Вас в курсе!");
+            sm.setText("&#9989;Отлично! Я буду держать Вас в курсе!");
             notifyObservers("subscribe", chatId);
 
             btns.add(new InlineKeyboardButton().builder()
                     .text("отписаться")
                     .callbackData("/subscribe").build());
-            rows.add(btns);
         }else{
-            sm.setText("Хорошо, я не буду Вам ничего присылать, но вы можете в любой момент подписаться снова!");
+            sm.setText("&#9989;Хорошо, я не буду Вам ничего присылать, но вы можете в любой момент подписаться снова!");
             notifyObservers("unsubscribe", chatId);
             btns.add(new InlineKeyboardButton().builder()
                     .text("подписаться")
                     .callbackData("/subscribe").build());
-            rows.add(btns);
         }
 
         btns.add(new InlineKeyboardButton().builder()
@@ -66,6 +65,7 @@ public class SubscribeCommand implements Command, Observable{
 
         keyboardMarkup.setKeyboard(rows);
         sm.setReplyMarkup(keyboardMarkup);
+        sm.setParseMode("HTML");
         sms.add(sm);
         return sms;
     }
