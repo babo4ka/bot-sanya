@@ -49,9 +49,10 @@ public class SendPostCommand implements Command {
             sm.setReplyMarkup(keyboardMarkup);
             sms.add(sm);
         }else{
-            SendMessage sm = new SendMessage();
-            sm.setText(update.getChannelPost().getText());
+
             for(Subs s : dataManager.getSubsData()){
+                SendMessage sm = new SendMessage();
+                sm.setText(update.getChannelPost().getText());
                 sm.setChatId(s.getID());
                 sm.setParseMode("HTML");
                 sms.add(sm);

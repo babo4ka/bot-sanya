@@ -78,6 +78,13 @@ public class StartCommand implements Command{
         rows = new ArrayList<>();
 
         rows.add(new InlineKeyboardButton().builder()
+                .text("список каналов")
+                .callbackData("/channels")
+                .build());
+        btns.add(rows);
+        rows = new ArrayList<>();
+
+        rows.add(new InlineKeyboardButton().builder()
                 .text("получить консультацию по всем тарифам")
                 .callbackData("/consultation alltariffs")
                 .build());

@@ -9,13 +9,15 @@ import bot.service.commandFactory.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
 import java.util.*;
 
 @Component
@@ -161,22 +163,34 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
         }
 
         if(update.hasCallbackQuery()){
-            try {
-                //if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
-                    deletePreviousMessages(update.getCallbackQuery().getMessage().getChatId());
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
-            }
-            List<SendMessage> sms = manager.executeCommand(
-                    update, update.getCallbackQuery().getData().split(" ")
-            );
-            try {
-                for(SendMessage sm: sms){
-                    sentMessage = execute(sm);
-                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+            if(update.getCallbackQuery().getData().equals("/channels")){
+                File file = new File(getClass().getClassLoader().getResource("channels.pdf").getFile());
+                SendDocument sd = new SendDocument();
+                sd.setDocument(new InputFile(file));
+                sd.setChatId(update.getCallbackQuery().getMessage().getChatId());
+                try {
+                    execute(sd);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
+            }else{
+                try {
+                    //if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
+                    deletePreviousMessages(update.getCallbackQuery().getMessage().getChatId());
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                List<SendMessage> sms = manager.executeCommand(
+                        update, update.getCallbackQuery().getData().split(" ")
+                );
+                try {
+                    for(SendMessage sm: sms){
+                        sentMessage = execute(sm);
+                        msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                    }
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 

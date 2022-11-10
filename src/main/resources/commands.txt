@@ -1,5 +1,0 @@
-start
-showTariffs
-backToMainMenu
-add/delete tag
-consultation
