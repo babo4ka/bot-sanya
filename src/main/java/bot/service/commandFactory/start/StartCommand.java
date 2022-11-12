@@ -2,6 +2,7 @@ package bot.service.commandFactory.start;
 
 import bot.service.DataManager;
 import bot.service.DataUpdateListener;
+import bot.service.Message;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -36,8 +37,8 @@ public class StartCommand implements Command{
     }
 
     @Override
-    public List<SendMessage> execute(Update update, String...args) {
-        List<SendMessage> sms = new ArrayList<>();
+    public List<Message> execute(Update update, String...args) {
+        List<Message> msgs = new ArrayList<>();
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
@@ -47,9 +48,11 @@ public class StartCommand implements Command{
         sendMessage.setReplyMarkup(setKeyboard(update.hasMessage()?update.getMessage().getChatId():
                 update.getCallbackQuery().getMessage().getChatId()));
         sendMessage.setParseMode("HTML");
-        sms.add(sendMessage);
+        Message msg = new Message(Message.MESSAGE);
+        msg.setSendMessage(sendMessage);
+        msgs.add(msg);
 
-        return sms;
+        return msgs;
     }
 
     @Override

@@ -51,7 +51,7 @@ public class CommandsManager {
     public CommandsManager(){
         setCommands();
     }
-    public List<SendMessage> executeCommand(Update update, String... commandAndArgs){
+    public List<Message> executeCommand(Update update, String... commandAndArgs){
         String [] args = commandAndArgs;
         if(commandAndArgs[0].equals("/consultation")){
             StringBuilder subArgs = new StringBuilder();

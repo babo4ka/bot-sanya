@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -150,12 +151,24 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
-            List<SendMessage> sms = manager.executeCommand
+            List<bot.service.Message> sms = manager.executeCommand
                     (update, update.getMessage().getText());
             try {
-                for(SendMessage sm: sms){
-                    sentMessage = execute(sm);
-                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                for(bot.service.Message sm: sms){
+                    switch (sm.getType()){
+                        case bot.service.Message.MESSAGE:
+                            SendMessage s = sm.getSendMessage();
+                            sentMessage = execute(s);
+                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            break;
+
+                        case bot.service.Message.PHOTO:
+                            SendPhoto p = sm.getSendPhoto();
+                            sentMessage = execute(p);
+                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            break;
+                    }
+
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -180,13 +193,24 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
-                List<SendMessage> sms = manager.executeCommand(
+                List<bot.service.Message> sms = manager.executeCommand(
                         update, update.getCallbackQuery().getData().split(" ")
                 );
                 try {
-                    for(SendMessage sm: sms){
-                        sentMessage = execute(sm);
-                        msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                    for(bot.service.Message sm: sms){
+                        switch (sm.getType()){
+                            case bot.service.Message.MESSAGE:
+                                SendMessage s = sm.getSendMessage();
+                                sentMessage = execute(s);
+                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                                break;
+
+                            case bot.service.Message.PHOTO:
+                                SendPhoto p = sm.getSendPhoto();
+                                sentMessage = execute(p);
+                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                                break;
+                        }
                     }
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
@@ -196,11 +220,23 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         if(update.hasChannelPost()
                 && String.valueOf(update.getChannelPost().getChatId()).equals(channelId)){
-            List<SendMessage> sms = manager.executeCommand(update, "/sendPost");
+            List<bot.service.Message> sms = manager.executeCommand(update, "/sendPost");
 
-            for(SendMessage s: sms){
+            for(bot.service.Message s: sms){
                 try {
-                    execute(s);
+                    switch (s.getType()){
+                        case bot.service.Message.MESSAGE:
+                            SendMessage sm = s.getSendMessage();
+                            sentMessage = execute(sm);
+                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            break;
+
+                        case bot.service.Message.PHOTO:
+                            SendPhoto p = s.getSendPhoto();
+                            sentMessage = execute(p);
+                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            break;
+                    }
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }

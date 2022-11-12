@@ -1,6 +1,7 @@
 package bot.service.commandFactory.consultation;
 
 import bot.service.DataUpdateListener;
+import bot.service.Message;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -32,8 +33,8 @@ public class GetConsultationCommand implements Command {
     }
 
     @Override
-    public List<SendMessage> execute(Update update, String... args) {
-        List<SendMessage> sms = new ArrayList<>();
+    public List<Message> execute(Update update, String... args) {
+        List<Message> msgs = new ArrayList<>();
         SendMessage sm = new SendMessage();
 
         if(args.length == 0 || !tariffsArgs.contains(args[1])){
@@ -59,12 +60,15 @@ public class GetConsultationCommand implements Command {
 
             sm.setReplyMarkup(keyboardMarkup);
             sm.setParseMode("HTML");
-            sms.add(sm);
+            Message msg = new Message(Message.MESSAGE);
+            msg.setSendMessage(sm);
+            msgs.add(msg);
 
-
-            sms.add(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
+            Message msg_s = new Message(Message.MESSAGE);
+            msg_s.setSendMessage(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
                     update.getCallbackQuery().getFrom().getUserName(), args[1]));
-        return sms;
+            msgs.add(msg_s);
+        return msgs;
     }
 
 

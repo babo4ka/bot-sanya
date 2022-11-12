@@ -3,6 +3,7 @@ package bot.service.commandFactory.tariffs;
 import bot.database.entites.Tags;
 import bot.service.DataManager;
 import bot.service.DataUpdateListener;
+import bot.service.Message;
 import bot.service.TariffReady;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -46,17 +47,19 @@ public class ShowTariffsCommand implements Command {
     }
 
     @Override
-    public List<SendMessage> execute(Update update, String... args) {
-        List<SendMessage> sms = new ArrayList<>();
+    public List<Message> execute(Update update, String... args) {
+        List<Message> msgs = new ArrayList<>();
 
 
         List<TariffReady> tr = DataManager.getInstance().getAlltariffs();
         if(args.length == 1){
             choosedTags.clear();
             for(TariffReady t:tr){
-                sms.add(setMessageToSend
+                Message msg = new Message(Message.MESSAGE);
+                msg.setSendMessage(setMessageToSend
                         (String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()),
-                        t));
+                                t));
+                msgs.add(msg);
             }
         }else{
             if(choosedTags.contains(args[1]) && args[1] != null)choosedTags.remove(args[1]);
@@ -64,14 +67,14 @@ public class ShowTariffsCommand implements Command {
 
             for(TariffReady t:tr){
                 if(checkTags(t)){
-                    sms.add(setMessageToSend
+                    Message msg = new Message(Message.MESSAGE);
+                    msg.setSendMessage(setMessageToSend
                             (String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()),
                                     t));
+                    msgs.add(msg);
                 }
             }
         }
-
-        System.out.println("===========================================\n" + sms.size());
 
         SendMessage tagChoose = new SendMessage();
         tagChoose.setText("Вы можете выбрать или убрать теги для фильтрации тарифов");
@@ -97,8 +100,10 @@ public class ShowTariffsCommand implements Command {
         rows.add(btns);
         keyboardMarkup.setKeyboard(rows);
         tagChoose.setReplyMarkup(keyboardMarkup);
-        sms.add(tagChoose);
-        return sms;
+        Message msg = new Message(Message.MESSAGE);
+        msg.setSendMessage(tagChoose);
+        msgs.add(msg);
+        return msgs;
     }
 
     private SendMessage setMessageToSend(String chatId, TariffReady tr){

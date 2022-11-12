@@ -1,5 +1,6 @@
 package bot.service.commandFactory.unknown;
 
+import bot.service.Message;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,8 +20,8 @@ public class UnknownCommand implements Command {
     }
 
     @Override
-    public List<SendMessage> execute(Update update, String... args) {
-        List<SendMessage> sms = new ArrayList<>();
+    public List<Message> execute(Update update, String... args) {
+        List<Message> msgs = new ArrayList<>();
         SendMessage sm = new SendMessage();
         sm.setText("Я Вас не понимаю :(");
         sm.setChatId(String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()));
@@ -37,9 +38,11 @@ public class UnknownCommand implements Command {
         keyboardMarkup.setKeyboard(btns);
         sm.enableMarkdown(true);
         sm.setReplyMarkup(keyboardMarkup);
-        sms.add(sm);
+        Message msg = new Message(Message.MESSAGE);
+        msg.setSendMessage(sm);
+        msgs.add(msg);
 
-        return sms;
+        return msgs;
     }
 
     @Override

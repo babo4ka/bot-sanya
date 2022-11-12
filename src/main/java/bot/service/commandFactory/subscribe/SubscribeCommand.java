@@ -2,6 +2,7 @@ package bot.service.commandFactory.subscribe;
 
 import bot.service.DataManager;
 import bot.service.DataUpdateListener;
+import bot.service.Message;
 import bot.service.Observable;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -30,9 +31,8 @@ public class SubscribeCommand implements Command, Observable{
 
 
     @Override
-    public List<SendMessage> execute(Update update, String... args) {
-        System.out.println("executing sub");
-        List<SendMessage> sms = new ArrayList<>();
+    public List<Message> execute(Update update, String... args) {
+        List<Message> msgs = new ArrayList<>();
         SendMessage sm = new SendMessage();
         long chatId = update.hasMessage()?update.getMessage().getChatId():
                 update.getCallbackQuery().getMessage().getChatId();
@@ -66,8 +66,10 @@ public class SubscribeCommand implements Command, Observable{
         keyboardMarkup.setKeyboard(rows);
         sm.setReplyMarkup(keyboardMarkup);
         sm.setParseMode("HTML");
-        sms.add(sm);
-        return sms;
+        Message msg = new Message(Message.MESSAGE);
+        msg.setSendMessage(sm);
+        msgs.add(msg);
+        return msgs;
     }
 
     @Override
