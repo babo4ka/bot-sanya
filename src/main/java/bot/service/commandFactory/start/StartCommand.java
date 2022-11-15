@@ -24,7 +24,8 @@ public class StartCommand implements Command{
             "&#128240;Вы также можете подписаться на мой новостной канал @ссылка\n" +
             "Или же подписаться на рассылку и я Вам сам буду присылать новые посты оттуда\n\n" +
             "&#129470;А я его бот-помощник:) через меня вы вкратце можете узнать интересующую Вас информацию\n" +
-            "Могу показать Вам тарифы или же сообщу Александру, чтобы он связался с Вами и обсудил все тарифы";
+            "Могу показать Вам тарифы или же сообщу Александру, чтобы он связался с Вами и обсудил все тарифы\n\n" +
+            "&#8252;Убедитесь, что у Вас указано имя пользователя в телеграмм(username) или я не смогу сообщить Александру с кем надо связаться";
 
     @Override
     public String[] getArgs() {
@@ -69,6 +70,20 @@ public class StartCommand implements Command{
         rows.add(new InlineKeyboardButton().builder()
                 .text("покажи все тарифы")
                 .callbackData("/showTariffs")
+                .build());
+        btns.add(rows);
+        rows = new ArrayList<>();
+
+        rows.add(new InlineKeyboardButton().builder()
+                .text("покажи акционные тарифы")
+                .callbackData("/discounts")
+                .build());
+        btns.add(rows);
+        rows = new ArrayList<>();
+
+        rows.add(new InlineKeyboardButton().builder()
+                .text("покупка оборудования")
+                .callbackData("/equip")
                 .build());
         btns.add(rows);
         rows = new ArrayList<>();

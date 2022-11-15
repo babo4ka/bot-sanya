@@ -57,7 +57,9 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
     @Autowired
     TagsInterRepository tagsInterRepository;
     List<Tags_inter> tagsInterData = new ArrayList<>();
-
+    @Autowired
+    DiscountRepository discountRepository;
+    List<Discount> discountData = new ArrayList<>();
 
 
     final BotConfig config;
@@ -79,11 +81,13 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
         serviceInterRepository.findAll().forEach(serviceInterData::add);
         tagsInterRepository.findAll().forEach(tagsInterData::add);
 
+        discountRepository.findAll().forEach(discountData::add);
+
         subsRepository.findAll().forEach(subsData::add);
 
         this.dataManager = DataManager.getInstance(
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                serviceInterData, tagsInterData, subsData
+                serviceInterData, tagsInterData, subsData, discountData, tariffRepository
         );
 
         List<TariffReady> tr = dataManager.getAlltariffs();

@@ -1,12 +1,21 @@
 package bot.service;
 
 import bot.database.entites.*;
+import bot.database.repositories.TariffRepository;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataManager {
+
+    TariffRepository tariffRepository;
+
+    public TariffRepository getTariffRepository() {
+        return tariffRepository;
+    }
 
     List<Equip> equipData = new ArrayList<>();
     List<Extra> extraData = new ArrayList<>();
@@ -19,6 +28,12 @@ public class DataManager {
     List<Extra_inter> extraInterData = new ArrayList<>();
     List<Service_inter> serviceInterData = new ArrayList<>();
     List<Tags_inter> tagsInterData = new ArrayList<>();
+
+    List<Discount> discountData = new ArrayList<>();
+
+    public List<Discount> getDiscountData() {
+        return discountData;
+    }
 
     List<Subs> subsData = new ArrayList<>();
 
@@ -52,11 +67,13 @@ public class DataManager {
                                           List<Extra_inter> extraInterData,
                                           List<Service_inter> serviceInterData,
                                           List<Tags_inter> tagsInterData,
-                                          List<Subs> subsData){
+                                          List<Subs> subsData,
+                                          List<Discount> discountData,
+                                          TariffRepository tariffRepository){
         if(instance == null) {
             instance = new DataManager(
                     equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                    serviceInterData, tagsInterData, subsData
+                    serviceInterData, tagsInterData, subsData, discountData, tariffRepository
             );
         }
             return instance;
@@ -71,7 +88,9 @@ public class DataManager {
                        List<Extra_inter> extraInterData,
                        List<Service_inter> serviceInterData,
                        List<Tags_inter> tagsInterData,
-                        List<Subs> subsData) {
+                        List<Subs> subsData,
+                        List<Discount> discountData,
+                        TariffRepository tariffRepository) {
         this.equipData = equipData;
         this.extraData = extraData;
         this.serviceData = serviceData;
@@ -82,14 +101,33 @@ public class DataManager {
         this.serviceInterData = serviceInterData;
         this.tagsInterData = tagsInterData;
         this.subsData = subsData;
+        this.discountData = discountData;
+        this.tariffRepository = tariffRepository;
 
         setAllTariffs();
     }
 
     List<TariffReady> alltariffs = new ArrayList<>();
+    Map<Long, TariffReady> tariffReadyById = new HashMap<>();
+
+    public Map<Long, TariffReady> getTariffReadyById() {
+        return tariffReadyById;
+    }
 
     public List<TariffReady> getAlltariffs() {
         return alltariffs;
+    }
+
+    private int hasDiscount(long id){
+        int has = -1;
+        for(Discount d: discountData){
+            if(d.getTariff_id() == id){
+                has = d.getPrice();
+                break;
+            }
+        }
+
+        return has;
     }
 
     private void setAllTariffs(){
@@ -149,9 +187,17 @@ public class DataManager {
                 }
             }
 
-            alltariffs.add(new TariffReady.TariffBuilder(
+            TariffReady.TariffBuilder builder = new TariffReady.TariffBuilder(
                     tariff.getName(), tariff.getPrice(), tariff.getShortDesc()
-            ).equip(equip).extra(extra).services(services).tags(tags).build());
+            ).equip(equip).extra(extra).services(services).tags(tags);
+
+            int disc = hasDiscount(tariff.getID());
+            if(disc != -1){
+                builder.discount(disc);
+            }
+
+            tariffReadyById.put(tariff.getID(), builder.build());
+            alltariffs.add(builder.build());
         }
     }
 

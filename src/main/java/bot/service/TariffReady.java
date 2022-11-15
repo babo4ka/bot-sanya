@@ -47,6 +47,9 @@ public class TariffReady {
         return tags;
     }
 
+    private boolean hasDiscount;
+    private int discountPrice;
+
     private TariffReady(TariffBuilder builder) {
         this.name = builder.name;
         this.price = builder.price;
@@ -55,9 +58,12 @@ public class TariffReady {
         this.extra = builder.extra;
         this.services = builder.services;
         this.tags = builder.tags;
+        this.hasDiscount = builder.hasDiscount;
+        this.discountPrice = builder.discountPrice;
     }
 
     public String toString(){
+
         StringBuilder equipF = new StringBuilder();
         equipF.append(equip.size()==0?"":"&#9881;Оборудование: \n");
         for(Equip e:equip){
@@ -79,8 +85,9 @@ public class TariffReady {
             tagsF.append(t.getName() + " ");
         }
 
-        return name + "\n" +
-                "Цена: " + price + "\n\n" +
+        return (hasDiscount?"&#10071;Акция на тариф\n":"") +
+                name + "\n" +
+                "Цена: " + (hasDiscount?discountPrice:price) + "\n\n" +
                 shortDesc + "\n\n" +
                 serviceF + "\n" +
                 equipF +
@@ -97,6 +104,8 @@ public class TariffReady {
         private List<Extra> extra;
         private List<Service> services;
         private List<Tags> tags;
+        private boolean hasDiscount;
+        private int discountPrice;
 
         public TariffBuilder(String name, int price, String shortDesc) {
             this.name = name;
@@ -124,6 +133,11 @@ public class TariffReady {
             return this;
         }
 
+        public TariffBuilder discount(int price){
+            this.hasDiscount = true;
+            this.discountPrice = price;
+            return this;
+        }
 
         public TariffReady build(){
             return new TariffReady(this);

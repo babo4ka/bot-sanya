@@ -19,6 +19,7 @@ public class GetConsultationCommand implements Command {
 
     public void setArgs(String...args){
         for(int i=0;i< args.length;i++){
+            System.out.println(args[i]);
             tariffsArgs.add(args[i]);
         }
     }
@@ -36,7 +37,7 @@ public class GetConsultationCommand implements Command {
     public List<Message> execute(Update update, String... args) {
         List<Message> msgs = new ArrayList<>();
         SendMessage sm = new SendMessage();
-
+        System.out.println(args[1]);
         if(args.length == 0 || !tariffsArgs.contains(args[1])){
             sm.setText("Неправильные аргументы для этой команды");
             sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())

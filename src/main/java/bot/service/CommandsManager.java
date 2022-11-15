@@ -2,6 +2,8 @@ package bot.service;
 
 import bot.service.commandFactory.SendPostCommand.SendPostCommandFactory;
 import bot.service.commandFactory.consultation.GetConsultationCommandFactory;
+import bot.service.commandFactory.discounts.DiscountsCommandFactory;
+import bot.service.commandFactory.equipment.ShowEquipmentCommandFactory;
 import bot.service.commandFactory.interfaces.Command;
 import bot.service.commandFactory.interfaces.CommandFactory;
 import bot.service.commandFactory.start.StartCommandFactory;
@@ -46,6 +48,8 @@ public class CommandsManager {
         commands.put("/unknown", createCommand("unknown").setCommand());
         commands.put("/subscribe", createCommand("subscribe").setCommand());
         commands.put("/sendPost", createCommand("sendPost").setCommand());
+        commands.put("/discounts", createCommand("discounts").setCommand());
+        commands.put("/equip", createCommand("equip").setCommand());
     }
 
     public CommandsManager(){
@@ -92,6 +96,12 @@ public class CommandsManager {
 
             case "sendPost":
                 return new SendPostCommandFactory();
+
+            case "discounts":
+                return new DiscountsCommandFactory();
+
+            case "equip":
+                return new ShowEquipmentCommandFactory();
 
             default:
                 return null;
