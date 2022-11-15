@@ -59,7 +59,7 @@ public class TariffReady {
 
     public String toString(){
         StringBuilder equipF = new StringBuilder();
-        equipF.append("&#9881;Оборудование: \n");
+        equipF.append(equip.size()==0?"":"&#9881;Оборудование: \n");
         for(Equip e:equip){
             equipF.append(e.getValue() + "\n");
         }
@@ -83,8 +83,8 @@ public class TariffReady {
                 "Цена: " + price + "\n\n" +
                 shortDesc + "\n\n" +
                 serviceF + "\n" +
-                equipF + "\n"+
-                extraF + "\n"+
+                equipF +
+                extraF +
                 tagsF + "\n";
     }
 
