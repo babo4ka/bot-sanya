@@ -87,7 +87,7 @@ public class TariffReady {
 
         return (hasDiscount?"&#10071;Акция на тариф\n":"") +
                 name + "\n" +
-                "Цена: " + (hasDiscount?discountPrice:price) + "\n\n" +
+                "Цена: " + (hasDiscount?discountPrice:price) + " рублей/месяц\n\n" +
                 shortDesc + "\n\n" +
                 serviceF + "\n" +
                 equipF +

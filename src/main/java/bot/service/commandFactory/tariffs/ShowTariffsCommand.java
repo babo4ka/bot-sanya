@@ -77,20 +77,24 @@ public class ShowTariffsCommand implements Command {
         }
 
         SendMessage tagChoose = new SendMessage();
-        tagChoose.setText("Вы можете выбрать или убрать теги для фильтрации тарифов");
+        tagChoose.setText("Вы можете добавить или убрать теги для фильтрации тарифов");
         tagChoose.setChatId(String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()));
         tagChoose.enableMarkdown(true);
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> btns = new ArrayList<>();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("wifi " + (choosedTags.contains("wifi")?"x":"+"))
+                .text((choosedTags.contains("wifi")?"убрать тег ":"добавить тег ") + "wifi")
                 .callbackData("/showTariffs wifi").build());
+        rows.add(btns);
+        btns = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("tv " + (choosedTags.contains("tv")?"x":"+"))
+                .text((choosedTags.contains("tv")?"убрать тег ":"добавить тег ") + "tv")
                 .callbackData("/showTariffs tv").build());
+        rows.add(btns);
+        btns = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("mobile " + (choosedTags.contains("mobile")?"x":"+"))
+                .text((choosedTags.contains("mobile")?"убрать тег ":"добавить тег ") + "mobile")
                 .callbackData("/showTariffs mobile").build());
         rows.add(btns);
         btns = new ArrayList<>();
