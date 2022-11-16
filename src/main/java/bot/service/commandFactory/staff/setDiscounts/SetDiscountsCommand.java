@@ -101,18 +101,11 @@ public class SetDiscountsCommand implements Command, Observable {
                 switch (args[1]){
                     case "add":
                         builder = new StringBuilder();
-                        builder.append("Выбери номер тарифа для того, чтобы добавить акцию\n");
-                        keyboardMarkup = new InlineKeyboardMarkup();
-                        btns = new ArrayList<>();
-                        rows = new ArrayList<>();
+                        builder.append("Выбери номер тарифа для того, чтобы добавить акцию и акционную цену\n" +
+                                "Вот так !номер_тарифа новая_цена\n");
 
                         for(Tariff t: dataManager.getTariffRepository().findAll()){
-                            builder.append(t.getID() + " - " + t.getName());
-                            btns.add(new InlineKeyboardButton().builder()
-                                    .text(String.valueOf(t.getID()))
-                                    .callbackData("/setDiscounts add " + t.getID()).build());
-                            rows.add(btns);
-                            btns = new ArrayList<>();
+                            builder.append(t.getID() + " - " + t.getName() + "\n");
                         }
                         break;
 
@@ -154,15 +147,28 @@ public class SetDiscountsCommand implements Command, Observable {
                 Message m = new Message(Message.MESSAGE, true);
                 m.setSendMessage(sm);
                 msgs.add(m);
-            }else if(args.length == 3){
+            }else if(args.length >= 3){
+                Discount d;
                 switch (args[1]){
                     case "add":
-
+                        int idToCreate = Integer.parseInt(args[2]);
+                        int price = Integer.parseInt(args[3]);
+                        d = new Discount();
+                        d.setPrice(price);
+                        d.setTariff_id(idToCreate);
+                        dataManager.getDiscountRepository().save(d);
+                        notifyObservers("reload", chatId);
+                        sm.setText("Акция добавлена!");
+                        btns.add(new InlineKeyboardButton().builder()
+                                .text("назад")
+                                .callbackData("/setDiscounts").build());
+                        rows.add(btns);
                         break;
 
                     case "remove":
-                        long idToRemove = Long.parseLong(args[2]);
-                        dataManager.getDiscountRepository().deleteByTariffId(idToRemove);
+                        int idToRemove = Integer.parseInt(args[2]);
+                        d = dataManager.getDiscountRepository().findByTariffId(idToRemove).get();
+                        dataManager.getDiscountRepository().deleteById(d.getID());
                         notifyObservers("reload", chatId);
                         sm.setText("Акция удалена!");
                         btns.add(new InlineKeyboardButton().builder()

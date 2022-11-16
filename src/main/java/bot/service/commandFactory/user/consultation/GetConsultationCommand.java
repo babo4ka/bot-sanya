@@ -20,7 +20,6 @@ public class GetConsultationCommand implements Command {
 
     public void setArgs(String...args){
         for(int i=0;i< args.length;i++){
-            System.out.println(args[i]);
             tariffsArgs.add(args[i]);
         }
     }
@@ -87,8 +86,9 @@ public class GetConsultationCommand implements Command {
     private SendMessage messageForSanya(String clientUserName, String tariffName){
         SendMessage sm = new SendMessage();
         sm.setChatId(String.valueOf(268932900));
-        sm.setText("Консультация по тарифу " + tariffName + "\n" +
-                "@" + clientUserName);
+        sm.setText(((tariffName.equals("alltariffs")?"Консультация по всем тарифам":"Консультация по тарифу " + tariffName) + "\n" +
+                "@" + clientUserName));
+
 
         return sm;
     }

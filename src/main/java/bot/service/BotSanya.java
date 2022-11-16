@@ -3,6 +3,7 @@ package bot.service;
 import bot.config.BotConfig;
 import bot.database.entites.*;
 import bot.database.repositories.*;
+import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommand;
 import bot.service.commandFactory.user.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,10 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class BotSanya extends TelegramLongPollingBot implements DataUpdateListener{
@@ -107,7 +105,10 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         manager.getCommandByName("/start").setDataManager();
         manager.getCommandByName("/sendPost").setDataManager();
-        manager.getCommandByName("/setDiscounts").setDataManager();
+
+        SetDiscountsCommand sd = (SetDiscountsCommand) manager.getCommandByName("/setDiscounts");
+        sd.setDataManager();
+        sd.addObserver(this);
     }
 
     private void reloadData(){
@@ -143,17 +144,38 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(!loaded){
-            if(update.getMessage().getChatId() == ownerId && update.getMessage().getText().equals("/load")){
-                loadData();
-                loaded = true;
-                return;
-            }
-        }
 
         Message sentMessage;
 
         if(update.hasMessage() && update.getMessage().hasText()){
+
+            if(update.getMessage().getChatId() == ownerId){
+                if(!loaded && update.getMessage().getText().equals("/load")){
+                    loadData();
+                    loaded = true;
+                    return;
+                }
+
+                if(update.getMessage().getText().startsWith("!")){
+                    try {
+                        deletePreviousMessages(update.getMessage().getChatId());
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    List<bot.service.Message> msgs = manager.executeCommand
+                            (update, ("/setDiscounts add " + update.getMessage().getText().substring(1)).split(" "));
+                    for(bot.service.Message m:msgs){
+                        try {
+                            sentMessage = execute(m.getSendMessage());
+                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                        } catch (TelegramApiException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    return;
+                }
+            }
+
             try {
                 deletePreviousMessages(update.getMessage().getChatId());
             } catch (TelegramApiException e) {
@@ -185,6 +207,7 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
+
         }
 
         if(update.hasCallbackQuery()){

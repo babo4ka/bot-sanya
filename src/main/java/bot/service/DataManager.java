@@ -27,6 +27,8 @@ public class DataManager {
     List<Extra_inter> extraInterData = new ArrayList<>();
     List<Service_inter> serviceInterData = new ArrayList<>();
     List<Tags_inter> tagsInterData = new ArrayList<>();
+
+
     DiscountRepository discountRepository;
 
     public DiscountRepository getDiscountRepository() {
@@ -40,6 +42,7 @@ public class DataManager {
     }
     public void setDiscountData(List<Discount> discountData){
         this.discountData = discountData;
+        setAllTariffs();
     }
 
     List<Subs> subsData = new ArrayList<>();
@@ -141,6 +144,7 @@ public class DataManager {
     }
 
     private void setAllTariffs(){
+        alltariffs = new ArrayList<>();
         for(Tariff tariff : tariffsData){
             List<Equip> equip = new ArrayList<>();
             List<Equip_inter> equip_inter = equipInterData.stream()
