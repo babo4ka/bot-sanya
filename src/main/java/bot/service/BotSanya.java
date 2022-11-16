@@ -3,9 +3,7 @@ package bot.service;
 import bot.config.BotConfig;
 import bot.database.entites.*;
 import bot.database.repositories.*;
-import bot.service.commandFactory.SendPostCommand.SendPostCommand;
-import bot.service.commandFactory.start.StartCommand;
-import bot.service.commandFactory.subscribe.SubscribeCommand;
+import bot.service.commandFactory.user.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -19,7 +17,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class BotSanya extends TelegramLongPollingBot implements DataUpdateListener{
@@ -87,7 +88,7 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         this.dataManager = DataManager.getInstance(
                 equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                serviceInterData, tagsInterData, subsData, discountData, tariffRepository
+                serviceInterData, tagsInterData, subsData, discountData, tariffRepository, discountRepository
         );
 
         List<TariffReady> tr = dataManager.getAlltariffs();
@@ -104,11 +105,15 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
         sc.addObserver(this);
         sc.setDataManager();
 
-        StartCommand stc = (StartCommand) manager.getCommandByName("/start");
-        stc.setDataManager();
+        manager.getCommandByName("/start").setDataManager();
+        manager.getCommandByName("/sendPost").setDataManager();
+        manager.getCommandByName("/setDiscounts").setDataManager();
+    }
 
-        SendPostCommand spc = (SendPostCommand) manager.getCommandByName("/sendPost");
-        spc.setDataManager();
+    private void reloadData(){
+        discountData = new ArrayList<>();
+        discountRepository.findAll().forEach(discountData::add);
+        this.dataManager.setDiscountData(discountData);
     }
 
 
@@ -150,26 +155,29 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         if(update.hasMessage() && update.getMessage().hasText()){
             try {
-                //if(update.getMessage().getChatId() != ownerId)
-                    deletePreviousMessages(update.getMessage().getChatId());
+                deletePreviousMessages(update.getMessage().getChatId());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
+
             List<bot.service.Message> sms = manager.executeCommand
                     (update, update.getMessage().getText());
+
             try {
                 for(bot.service.Message sm: sms){
                     switch (sm.getType()){
                         case bot.service.Message.MESSAGE:
                             SendMessage s = sm.getSendMessage();
                             sentMessage = execute(s);
-                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            if(sm.isMarkable())
+                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                             break;
 
                         case bot.service.Message.PHOTO:
                             SendPhoto p = sm.getSendPhoto();
                             sentMessage = execute(p);
-                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            if(sm.isMarkable())
+                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                             break;
                     }
 
@@ -192,7 +200,6 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 }
             }else{
                 try {
-                    //if(update.getCallbackQuery().getMessage().getChatId() != ownerId)
                     deletePreviousMessages(update.getCallbackQuery().getMessage().getChatId());
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
@@ -206,13 +213,15 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                             case bot.service.Message.MESSAGE:
                                 SendMessage s = sm.getSendMessage();
                                 sentMessage = execute(s);
-                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                                if(sm.isMarkable())
+                                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                                 break;
 
                             case bot.service.Message.PHOTO:
                                 SendPhoto p = sm.getSendPhoto();
                                 sentMessage = execute(p);
-                                msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                                if(sm.isMarkable())
+                                    msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                                 break;
                         }
                     }
@@ -231,14 +240,12 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                     switch (s.getType()){
                         case bot.service.Message.MESSAGE:
                             SendMessage sm = s.getSendMessage();
-                            sentMessage = execute(sm);
-                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            execute(sm);
                             break;
 
                         case bot.service.Message.PHOTO:
                             SendPhoto p = s.getSendPhoto();
-                            sentMessage = execute(p);
-                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
+                            execute(p);
                             break;
                     }
                 } catch (TelegramApiException e) {
@@ -281,6 +288,10 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 s.setID(chatId);
                 subsRepository.delete(s);
                 subsRepository.findAll().forEach(subsData::add);
+                break;
+
+            case "reload":
+                reloadData();
                 break;
         }
         dataManager.setSubsData(subsData);

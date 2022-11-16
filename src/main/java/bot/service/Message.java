@@ -16,8 +16,19 @@ public class Message {
 
     private String type;
 
-    public Message(String type){
+    private boolean markable;
+
+    public boolean isMarkable() {
+        return markable;
+    }
+
+    public void setMarkable(boolean markable) {
+        this.markable = markable;
+    }
+
+    public Message(String type, boolean markable){
         this.type = type;
+        this.markable = markable;
         switch (type){
             case MESSAGE:
                 this.sendMessage = new SendMessage();

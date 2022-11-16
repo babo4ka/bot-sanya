@@ -1,9 +1,8 @@
 package bot.service;
 
 import bot.database.entites.*;
+import bot.database.repositories.DiscountRepository;
 import bot.database.repositories.TariffRepository;
-
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +27,19 @@ public class DataManager {
     List<Extra_inter> extraInterData = new ArrayList<>();
     List<Service_inter> serviceInterData = new ArrayList<>();
     List<Tags_inter> tagsInterData = new ArrayList<>();
+    DiscountRepository discountRepository;
+
+    public DiscountRepository getDiscountRepository() {
+        return discountRepository;
+    }
 
     List<Discount> discountData = new ArrayList<>();
 
     public List<Discount> getDiscountData() {
         return discountData;
+    }
+    public void setDiscountData(List<Discount> discountData){
+        this.discountData = discountData;
     }
 
     List<Subs> subsData = new ArrayList<>();
@@ -69,11 +76,12 @@ public class DataManager {
                                           List<Tags_inter> tagsInterData,
                                           List<Subs> subsData,
                                           List<Discount> discountData,
-                                          TariffRepository tariffRepository){
+                                          TariffRepository tariffRepository,
+                                          DiscountRepository discountRepository){
         if(instance == null) {
             instance = new DataManager(
                     equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                    serviceInterData, tagsInterData, subsData, discountData, tariffRepository
+                    serviceInterData, tagsInterData, subsData, discountData, tariffRepository, discountRepository
             );
         }
             return instance;
@@ -90,7 +98,8 @@ public class DataManager {
                        List<Tags_inter> tagsInterData,
                         List<Subs> subsData,
                         List<Discount> discountData,
-                        TariffRepository tariffRepository) {
+                        TariffRepository tariffRepository,
+                        DiscountRepository discountRepository) {
         this.equipData = equipData;
         this.extraData = extraData;
         this.serviceData = serviceData;
@@ -103,6 +112,7 @@ public class DataManager {
         this.subsData = subsData;
         this.discountData = discountData;
         this.tariffRepository = tariffRepository;
+        this.discountRepository = discountRepository;
 
         setAllTariffs();
     }

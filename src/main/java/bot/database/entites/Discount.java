@@ -11,7 +11,7 @@ public class Discount {
     @Column(name = "порядковый_номер_акции")
     private long ID;
     @Column(name = "id_тарифа_для_акции")
-    private int tariff_id;
+    private int tariffId;
     @Column(name = "цена_по_акции")
     private int price;
 
@@ -24,11 +24,11 @@ public class Discount {
     }
 
     public int getTariff_id() {
-        return tariff_id;
+        return tariffId;
     }
 
     public void setTariff_id(int tariff_id) {
-        this.tariff_id = tariff_id;
+        this.tariffId = tariff_id;
     }
 
     public int getPrice() {

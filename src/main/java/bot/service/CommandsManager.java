@@ -1,17 +1,16 @@
 package bot.service;
 
-import bot.service.commandFactory.SendPostCommand.SendPostCommandFactory;
-import bot.service.commandFactory.consultation.GetConsultationCommandFactory;
-import bot.service.commandFactory.discounts.DiscountsCommandFactory;
-import bot.service.commandFactory.equipment.ShowEquipmentCommandFactory;
+import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommandFactory;
+import bot.service.commandFactory.user.SendPostCommand.SendPostCommandFactory;
+import bot.service.commandFactory.user.consultation.GetConsultationCommandFactory;
+import bot.service.commandFactory.user.discounts.DiscountsCommandFactory;
+import bot.service.commandFactory.user.equipment.ShowEquipmentCommandFactory;
 import bot.service.commandFactory.interfaces.Command;
 import bot.service.commandFactory.interfaces.CommandFactory;
-import bot.service.commandFactory.start.StartCommandFactory;
-import bot.service.commandFactory.subscribe.SubscribeCommandFactory;
-import bot.service.commandFactory.tariffs.ShowTariffsCommandFactory;
-import bot.service.commandFactory.unknown.UnknownCommandFactory;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import bot.service.commandFactory.user.start.StartCommandFactory;
+import bot.service.commandFactory.user.subscribe.SubscribeCommandFactory;
+import bot.service.commandFactory.user.tariffs.ShowTariffsCommandFactory;
+import bot.service.commandFactory.user.unknown.UnknownCommandFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -50,6 +49,8 @@ public class CommandsManager {
         commands.put("/sendPost", createCommand("sendPost").setCommand());
         commands.put("/discounts", createCommand("discounts").setCommand());
         commands.put("/equip", createCommand("equip").setCommand());
+
+        commands.put("/setDiscounts", createCommand("setDiscounts").setCommand());
     }
 
     public CommandsManager(){
@@ -71,6 +72,11 @@ public class CommandsManager {
         if(commands.get(commandAndArgs[0]) == null){
             return commands.get("/unknown").execute(update, commandAndArgs);
         }
+
+        for(int i=0;i<commandAndArgs.length;i++){
+            System.out.println(commandAndArgs[i]);
+        }
+
         return commands.get(commandAndArgs[0]).execute(update, commandAndArgs);
     }
 
@@ -102,6 +108,9 @@ public class CommandsManager {
 
             case "equip":
                 return new ShowEquipmentCommandFactory();
+
+            case "setDiscounts":
+                return new SetDiscountsCommandFactory();
 
             default:
                 return null;
