@@ -136,9 +136,9 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
 
     boolean loaded = false;
-    private final long ownerId = 268932900;
+    private final long ownerId = 5637580055L;
 
-    private final String channelId = "-1001379659811";
+    private final String channelId = "-1001788432377";
 
     private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
 

@@ -25,7 +25,7 @@ public class SetDiscountsCommand implements Command, Observable {
         return new String[0];
     }
 
-    private final long ownerId = 268932900;
+    private final long ownerId = 5637580055L;
 
     private DataManager dataManager;
     @Override

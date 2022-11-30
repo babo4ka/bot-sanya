@@ -30,7 +30,7 @@ public class SendPostCommand implements Command {
         this.dataManager = DataManager.getInstance();
     }
 
-    private final String channelId = "-1001379659811";
+    private final String channelId = "-1001788432377";
 
     @Override
     public List<Message> execute(Update update, String... args) {
