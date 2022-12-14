@@ -30,7 +30,7 @@ public class SendPostCommand implements Command {
         this.dataManager = DataManager.getInstance();
     }
 
-    private final String channelId = "-1001379659811";
+    private final String channelId = "-1001788432377";
 
     @Override
     public List<Message> execute(Update update, String... args) {
@@ -46,7 +46,7 @@ public class SendPostCommand implements Command {
             List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
             btns.add(new InlineKeyboardButton().builder()
-                    .text("в начало")
+                    .text("В НАЧАЛО")
                     .callbackData("/start").build());
             rows.add(btns);
             keyboardMarkup.setKeyboard(rows);

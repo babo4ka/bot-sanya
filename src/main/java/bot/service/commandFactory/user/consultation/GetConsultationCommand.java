@@ -1,17 +1,18 @@
 package bot.service.commandFactory.user.consultation;
 
-import bot.service.DataUpdateListener;
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
+import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+@PropertySource("app.properties")
 public class GetConsultationCommand implements Command {
 
     private final String name = "/consultation";
@@ -24,6 +25,11 @@ public class GetConsultationCommand implements Command {
         }
     }
 
+    @Value("${bot.owner}")
+    private long ownerId;
+    @Value("${bot.subowner}")
+    private long subOwner;
+
     public GetConsultationCommand(){
         this.tariffsArgs.add("alltariffs");
     }
@@ -33,42 +39,43 @@ public class GetConsultationCommand implements Command {
         return this.tariffsArgs.toArray(new String[0]);
     }
 
+    MessageCreator creator = new MessageCreator();
+
     @Override
-    public List<Message> execute(Update update, String... args) {
+    public List<Message> execute(Update update, List<String> arguments) {
         List<Message> msgs = new ArrayList<>();
-        SendMessage sm = new SendMessage();
 
-        if(args.length == 0 || !tariffsArgs.contains(args[1])){
-            sm.setText("Неправильные аргументы для этой команды");
-            sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
-                    :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
-        }else{
-            sm.setText("&#9989;Отлично, я свяжусь с Вами в телеграме в ближайшее время!");
-            sm.enableMarkdown(true);
-            sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
-                    :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        long chatId = update.hasMessage()?update.getMessage().getChatId()
+                :update.getCallbackQuery().getMessage().getChatId();
+
+        List<List<HashMap<String, String>>> data = new ArrayList<>();
+        List<HashMap<String, String>> btns = new ArrayList<>();
+
+        String tariffName = "";
+
+        for(String s : arguments){
+            tariffName = String.join(" ", tariffName, s);
         }
-            InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-            List<InlineKeyboardButton> rows = new ArrayList<>();
-            List<List<InlineKeyboardButton>> btns = new ArrayList<>();
 
-            rows.add(new InlineKeyboardButton().builder()
-                    .text("вернуться в начало")
-                    .callbackData("/start").build());
-            btns.add(rows);
+        btns.add(new HashMap<>(){{
+            put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
+            put("callback", "/start");
+        }});
 
-            keyboardMarkup.setKeyboard(btns);
+        data.add(btns);
 
-            sm.setReplyMarkup(keyboardMarkup);
-            sm.setParseMode("HTML");
-            Message msg = new Message(Message.MESSAGE, true);
-            msg.setSendMessage(sm);
-            msgs.add(msg);
+        msgs.add(creator.createTextMessage(
+                data,
+                chatId,
+                "&#9989;Отлично, я свяжусь с Вами в телеграме в ближайшее время!",
+                true
+        ));
 
-            Message msg_s = new Message(Message.MESSAGE, false);
-            msg_s.setSendMessage(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
-                    update.getCallbackQuery().getFrom().getUserName(), args[1]));
-            msgs.add(msg_s);
+
+        Message msg_s = new Message(Message.MESSAGE, false);
+        msg_s.setSendMessage(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
+                    update.getCallbackQuery().getFrom().getUserName(), tariffName));
+        msgs.add(msg_s);
         return msgs;
     }
 
@@ -85,10 +92,9 @@ public class GetConsultationCommand implements Command {
 
     private SendMessage messageForSanya(String clientUserName, String tariffName){
         SendMessage sm = new SendMessage();
-        sm.setChatId(String.valueOf(268932900));
+        sm.setChatId(String.valueOf(ownerId));
         sm.setText(((tariffName.equals("alltariffs")?"Консультация по всем тарифам":"Консультация по тарифу " + tariffName) + "\n" +
                 "@" + clientUserName));
-
 
         return sm;
     }

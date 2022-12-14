@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface Command{
     String[] getArgs();
-    List<Message> execute(Update update, String...args);
+    List<Message> execute(Update update, List<String> arguments);
     void setDataManager();
     CommandType getCommandType();
     void setArgs(String...args);

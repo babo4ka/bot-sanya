@@ -1,55 +1,94 @@
 package bot.service;
 
 import bot.database.entites.*;
-import bot.database.repositories.DiscountRepository;
-import bot.database.repositories.TariffRepository;
+import bot.database.repositories.*;
+import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommand;
+import bot.service.commandFactory.user.subscribe.SubscribeCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class DataManager {
+@Component
+public class DataManager{
 
-    TariffRepository tariffRepository;
-
-    public TariffRepository getTariffRepository() {
-        return tariffRepository;
-    }
-
+    //репозитории сущностей
+    @Autowired
+    EquipRepository equipRepository;
     List<Equip> equipData = new ArrayList<>();
+    @Autowired
+    ExtraRepository extraRepository;
     List<Extra> extraData = new ArrayList<>();
+    @Autowired
+    ServiceRepository serviceRepository;
     List<Service> serviceData = new ArrayList<>();
+    @Autowired
+    TagsRepository tagsRepository;
     List<Tags> tagsData = new ArrayList<>();
-
+    @Autowired
+    TariffRepository tariffRepository;
     List<Tariff> tariffsData = new ArrayList<>();
+    @Autowired
+    SubsRepository subsRepository;
+    List<Subs> subsData = new ArrayList<>();
 
+    //репозитории промежутков
+    @Autowired
+    EquipInterRepository equipInterRepository;
     List<Equip_inter> equipInterData = new ArrayList<>();
+    @Autowired
+    ExtraInterRepository extraInterRepository;
     List<Extra_inter> extraInterData = new ArrayList<>();
+    @Autowired
+    ServiceInterRepository serviceInterRepository;
     List<Service_inter> serviceInterData = new ArrayList<>();
+    @Autowired
+    TagsInterRepository tagsInterRepository;
     List<Tags_inter> tagsInterData = new ArrayList<>();
-
-
+    @Autowired
     DiscountRepository discountRepository;
-
-    public DiscountRepository getDiscountRepository() {
-        return discountRepository;
-    }
-
     List<Discount> discountData = new ArrayList<>();
 
-    public List<Discount> getDiscountData() {
-        return discountData;
+
+
+    private static DataManager instance;
+    public static DataManager getInstance(){
+        if(instance == null)
+            instance = new DataManager();
+
+        return instance;
     }
-    public void setDiscountData(List<Discount> discountData){
-        this.discountData = discountData;
+    private DataManager(){
         setAllTariffs();
     }
 
-    List<Subs> subsData = new ArrayList<>();
+    @Autowired
+    private void loadData(){
+        equipRepository.findAll().forEach(equipData::add);
+        extraRepository.findAll().forEach(extraData::add);
+        serviceRepository.findAll().forEach(serviceData::add);
+        tagsRepository.findAll().forEach(tagsData::add);
 
-    public List<Subs> getSubsData(){
-        return subsData;
+        tariffRepository.findAll().forEach(tariffsData::add);
+
+        equipInterRepository.findAll().forEach(equipInterData::add);
+        extraInterRepository.findAll().forEach(extraInterData::add);
+        serviceInterRepository.findAll().forEach(serviceInterData::add);
+        tagsInterRepository.findAll().forEach(tagsInterData::add);
+
+        discountRepository.findAll().forEach(discountData::add);
+
+        subsRepository.findAll().forEach(subsData::add);
+
+
+        String[] args = new String[alltariffs.size()];
+
+        for(int i=0;i<args.length;i++){
+            args[i] = alltariffs.get(i).getName();
+        }
     }
+
 
     public boolean isSub(long chatId){
         for(Subs s:subsData){
@@ -58,78 +97,11 @@ public class DataManager {
         return false;
     }
 
-    public void setSubsData(List<Subs> subsData) {
-        this.subsData = subsData;
-    }
-
-    public static DataManager instance;
-
-    public static DataManager getInstance(){
-        return instance;
-    }
-
-    public static DataManager getInstance(List<Equip> equipData,
-                                          List<Extra> extraData,
-                                          List<Service> serviceData,
-                                          List<Tags> tagsData,
-                                          List<Tariff> tariffsData,
-                                          List<Equip_inter> equipInterData,
-                                          List<Extra_inter> extraInterData,
-                                          List<Service_inter> serviceInterData,
-                                          List<Tags_inter> tagsInterData,
-                                          List<Subs> subsData,
-                                          List<Discount> discountData,
-                                          TariffRepository tariffRepository,
-                                          DiscountRepository discountRepository){
-        if(instance == null) {
-            instance = new DataManager(
-                    equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                    serviceInterData, tagsInterData, subsData, discountData, tariffRepository, discountRepository
-            );
-        }
-            return instance;
-    }
-
-    private DataManager(List<Equip> equipData,
-                       List<Extra> extraData,
-                       List<Service> serviceData,
-                       List<Tags> tagsData,
-                       List<Tariff> tariffsData,
-                       List<Equip_inter> equipInterData,
-                       List<Extra_inter> extraInterData,
-                       List<Service_inter> serviceInterData,
-                       List<Tags_inter> tagsInterData,
-                        List<Subs> subsData,
-                        List<Discount> discountData,
-                        TariffRepository tariffRepository,
-                        DiscountRepository discountRepository) {
-        this.equipData = equipData;
-        this.extraData = extraData;
-        this.serviceData = serviceData;
-        this.tagsData = tagsData;
-        this.tariffsData = tariffsData;
-        this.equipInterData = equipInterData;
-        this.extraInterData = extraInterData;
-        this.serviceInterData = serviceInterData;
-        this.tagsInterData = tagsInterData;
-        this.subsData = subsData;
-        this.discountData = discountData;
-        this.tariffRepository = tariffRepository;
-        this.discountRepository = discountRepository;
-
-        setAllTariffs();
-    }
-
     List<TariffReady> alltariffs = new ArrayList<>();
-    Map<Long, TariffReady> tariffReadyById = new HashMap<>();
-
-    public Map<Long, TariffReady> getTariffReadyById() {
-        return tariffReadyById;
-    }
-
     public List<TariffReady> getAlltariffs() {
         return alltariffs;
     }
+
 
     private int hasDiscount(long id){
         int has = -1;
@@ -143,6 +115,7 @@ public class DataManager {
         return has;
     }
 
+    @Autowired
     private void setAllTariffs(){
         alltariffs = new ArrayList<>();
         for(Tariff tariff : tariffsData){
@@ -210,9 +183,46 @@ public class DataManager {
                 builder.discount(disc);
             }
 
-            tariffReadyById.put(tariff.getID(), builder.build());
             alltariffs.add(builder.build());
         }
     }
+
+    public void reSub(String action, long chatId){
+        Subs s;
+        switch (action){
+            case "subscribe":
+                subsData = new ArrayList<>();
+                s = new Subs();
+                s.setID(chatId);
+                subsRepository.save(s);
+                subsRepository.findAll().forEach(subsData::add);
+                break;
+
+            case "unsubscribe":
+                subsData = new ArrayList<>();
+                s = new Subs();
+                s.setID(chatId);
+                subsRepository.delete(s);
+                subsRepository.findAll().forEach(subsData::add);
+                break;
+        }
+    }
+
+    public void createDiscount(int id, int price){
+        Discount d = new Discount();
+        d.setPrice(price);
+        d.setTariff_id(id);
+        discountRepository.save(d);
+        discountData = new ArrayList<>();
+        discountRepository.findAll().forEach(discountData::add);
+    }
+
+    public void deleteDiscount(long id){
+        Discount d = new Discount();
+        discountRepository.deleteById(id);
+        discountData = new ArrayList<>();
+        discountRepository.findAll().forEach(discountData::add);
+    }
+
 
 }

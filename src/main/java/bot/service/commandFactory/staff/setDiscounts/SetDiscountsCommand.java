@@ -8,6 +8,7 @@ import bot.service.Message;
 import bot.service.Observable;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.interfaces.Command;
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -25,7 +26,10 @@ public class SetDiscountsCommand implements Command, Observable {
         return new String[0];
     }
 
-    private final long ownerId = 268932900;
+    @Value("${bot.owner}")
+    private long ownerId;
+    @Value("${bot.subowner}")
+    private long subOwner;
 
     private DataManager dataManager;
     @Override
@@ -53,7 +57,7 @@ public class SetDiscountsCommand implements Command, Observable {
 
 
             btns.add(new InlineKeyboardButton().builder()
-                    .text("вернуться в начало")
+                    .text("ВЕРНУТЬСЯ В НАЧАЛО")
                     .callbackData("/start").build());
             rows.add(btns);
             keyboardMarkup.setKeyboard(rows);
@@ -77,16 +81,16 @@ public class SetDiscountsCommand implements Command, Observable {
                 rows = new ArrayList<>();
 
                 btns.add(new InlineKeyboardButton().builder()
-                        .text("добавить")
+                        .text("ДОБАВИТЬ")
                         .callbackData("/setDiscounts add").build());
                 btns.add(new InlineKeyboardButton().builder()
-                        .text("удалить")
+                        .text("УДАЛИТЬ")
                         .callbackData("/setDiscounts remove").build());
                 rows.add(btns);
                 btns = new ArrayList<>();
 
                 btns.add(new InlineKeyboardButton().builder()
-                        .text("вернуться в начало")
+                        .text("ВЕРНУТЬСЯ В НАЧАЛО")
                         .callbackData("/start").build());
                 rows.add(btns);
                 keyboardMarkup.setKeyboard(rows);
@@ -136,7 +140,7 @@ public class SetDiscountsCommand implements Command, Observable {
                 sm.setText(builder.toString());
 
                 btns.add(new InlineKeyboardButton().builder()
-                        .text("отмена")
+                        .text("ОТМЕНА")
                         .callbackData("/setDiscounts").build());
                 rows.add(btns);
 
@@ -160,7 +164,7 @@ public class SetDiscountsCommand implements Command, Observable {
                         notifyObservers("reload", chatId);
                         sm.setText("Акция добавлена!");
                         btns.add(new InlineKeyboardButton().builder()
-                                .text("назад")
+                                .text("НАЗАД")
                                 .callbackData("/setDiscounts").build());
                         rows.add(btns);
                         break;
@@ -172,7 +176,7 @@ public class SetDiscountsCommand implements Command, Observable {
                         notifyObservers("reload", chatId);
                         sm.setText("Акция удалена!");
                         btns.add(new InlineKeyboardButton().builder()
-                                .text("назад")
+                                .text("НАЗАД")
                                 .callbackData("/setDiscounts").build());
                         rows.add(btns);
                         break;

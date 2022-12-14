@@ -49,18 +49,18 @@ public class SubscribeCommand implements Command, Observable{
             notifyObservers("subscribe", chatId);
 
             btns.add(new InlineKeyboardButton().builder()
-                    .text("отписаться")
+                    .text("ОТПИСАТЬСЯ")
                     .callbackData("/subscribe").build());
         }else{
             sm.setText("&#9989;Хорошо, я не буду Вам ничего присылать, но вы можете в любой момент подписаться снова!");
             notifyObservers("unsubscribe", chatId);
             btns.add(new InlineKeyboardButton().builder()
-                    .text("подписаться")
+                    .text("ПОДПИСАТЬСЯ")
                     .callbackData("/subscribe").build());
         }
 
         btns.add(new InlineKeyboardButton().builder()
-                .text("в начало")
+                .text("В НАЧАЛО")
                 .callbackData("/start").build());
         rows.add(btns);
 

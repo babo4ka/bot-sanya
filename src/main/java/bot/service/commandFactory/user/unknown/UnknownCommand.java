@@ -32,7 +32,7 @@ public class UnknownCommand implements Command {
         List<List<InlineKeyboardButton>> btns = new ArrayList<>();
 
         rows.add(new InlineKeyboardButton().builder()
-                .text("вернуться в начало")
+                .text("ВЕРНУТЬСЯ В НАЧАЛО")
                 .callbackData("/start").build());
         btns.add(rows);
 

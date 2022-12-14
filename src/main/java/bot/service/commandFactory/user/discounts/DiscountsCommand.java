@@ -40,7 +40,7 @@ public class DiscountsCommand implements Command {
                 List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
                 btns.add(new InlineKeyboardButton().builder()
-                        .text("получить консультацию")
+                        .text("ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ")
                         .callbackData("/consultation " + t.getName()).build());
                 rows.add(btns);
 
@@ -59,7 +59,7 @@ public class DiscountsCommand implements Command {
             List<InlineKeyboardButton> btns = new ArrayList<>();
             List<List<InlineKeyboardButton>> rows = new ArrayList<>();
             btns.add(new InlineKeyboardButton().builder()
-                    .text("вернуться в начало")
+                    .text("ВЕРНУТЬСЯ В НАЧАЛО")
                     .callbackData("/start").build());
             rows.add(btns);
 
@@ -76,7 +76,7 @@ public class DiscountsCommand implements Command {
         List<InlineKeyboardButton> btns = new ArrayList<>();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("вернуться в начало")
+                .text("ВЕРНУТЬСЯ В НАЧАЛО")
                 .callbackData("/start").build());
         rows.add(btns);
 

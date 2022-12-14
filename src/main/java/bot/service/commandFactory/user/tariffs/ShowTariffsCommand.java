@@ -85,22 +85,22 @@ public class ShowTariffsCommand implements Command {
         List<InlineKeyboardButton> btns = new ArrayList<>();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("wifi")?"убрать тег ":"добавить тег ") + "wifi")
+                .text((choosedTags.contains("wifi")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "WIFI")
                 .callbackData("/showTariffs wifi").build());
         rows.add(btns);
         btns = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("tv")?"убрать тег ":"добавить тег ") + "tv")
+                .text((choosedTags.contains("tv")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "TV")
                 .callbackData("/showTariffs tv").build());
         rows.add(btns);
         btns = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("mobile")?"убрать тег ":"добавить тег ") + "mobile")
+                .text((choosedTags.contains("mobile")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "MOBILE")
                 .callbackData("/showTariffs mobile").build());
         rows.add(btns);
         btns = new ArrayList<>();
         btns.add(new InlineKeyboardButton().builder()
-                .text("вернуться в начало")
+                .text("ВЕРНУТЬСЯ В НАЧАЛО")
                 .callbackData("/start").build());
         rows.add(btns);
         keyboardMarkup.setKeyboard(rows);
@@ -136,7 +136,7 @@ public class ShowTariffsCommand implements Command {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
         btns.add(new InlineKeyboardButton().builder()
-                .text("получить консультацию")
+                .text("ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ")
                 .callbackData("/consultation " + tr.getName()).build());
         rows.add(btns);
 

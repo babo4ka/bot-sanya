@@ -6,6 +6,7 @@ import bot.database.repositories.*;
 import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommand;
 import bot.service.commandFactory.user.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -21,101 +22,14 @@ import java.io.File;
 import java.util.*;
 
 @Component
-public class BotSanya extends TelegramLongPollingBot implements DataUpdateListener{
-
-    //репозитории сущностей
-    @Autowired
-    EquipRepository equipRepository;
-    List<Equip> equipData = new ArrayList<>();
-    @Autowired
-    ExtraRepository extraRepository;
-    List<Extra> extraData = new ArrayList<>();
-    @Autowired
-    ServiceRepository serviceRepository;
-    List<Service> serviceData = new ArrayList<>();
-    @Autowired
-    TagsRepository tagsRepository;
-    List<Tags> tagsData = new ArrayList<>();
-    @Autowired
-    TariffRepository tariffRepository;
-    List<Tariff> tariffsData = new ArrayList<>();
-    @Autowired
-    SubsRepository subsRepository;
-    List<Subs> subsData = new ArrayList<>();
-
-    //репозитории промежутков
-    @Autowired
-    EquipInterRepository equipInterRepository;
-    List<Equip_inter> equipInterData = new ArrayList<>();
-    @Autowired
-    ExtraInterRepository extraInterRepository;
-    List<Extra_inter> extraInterData = new ArrayList<>();
-    @Autowired
-    ServiceInterRepository serviceInterRepository;
-    List<Service_inter> serviceInterData = new ArrayList<>();
-    @Autowired
-    TagsInterRepository tagsInterRepository;
-    List<Tags_inter> tagsInterData = new ArrayList<>();
-    @Autowired
-    DiscountRepository discountRepository;
-    List<Discount> discountData = new ArrayList<>();
-
+public class BotSanya extends TelegramLongPollingBot{
 
     final BotConfig config;
 
     final CommandsManager manager;
 
+    @Autowired
     private DataManager dataManager;
-
-    private void loadData(){
-        equipRepository.findAll().forEach(equipData::add);
-        extraRepository.findAll().forEach(extraData::add);
-        serviceRepository.findAll().forEach(serviceData::add);
-        tagsRepository.findAll().forEach(tagsData::add);
-
-        tariffRepository.findAll().forEach(tariffsData::add);
-
-        equipInterRepository.findAll().forEach(equipInterData::add);
-        extraInterRepository.findAll().forEach(extraInterData::add);
-        serviceInterRepository.findAll().forEach(serviceInterData::add);
-        tagsInterRepository.findAll().forEach(tagsInterData::add);
-
-        discountRepository.findAll().forEach(discountData::add);
-
-        subsRepository.findAll().forEach(subsData::add);
-
-        this.dataManager = DataManager.getInstance(
-                equipData, extraData, serviceData, tagsData, tariffsData, equipInterData, extraInterData,
-                serviceInterData, tagsInterData, subsData, discountData, tariffRepository, discountRepository
-        );
-
-        List<TariffReady> tr = dataManager.getAlltariffs();
-
-        String[] args = new String[tr.size()];
-
-        for(int i=0;i<args.length;i++){
-            args[i] = tr.get(i).getName();
-        }
-
-        manager.setArgs("/consultation", args);
-
-        SubscribeCommand sc = (SubscribeCommand) manager.getCommandByName("/subscribe");
-        sc.addObserver(this);
-        sc.setDataManager();
-
-        manager.getCommandByName("/start").setDataManager();
-        manager.getCommandByName("/sendPost").setDataManager();
-
-        SetDiscountsCommand sd = (SetDiscountsCommand) manager.getCommandByName("/setDiscounts");
-        sd.setDataManager();
-        sd.addObserver(this);
-    }
-
-    private void reloadData(){
-        discountData = new ArrayList<>();
-        discountRepository.findAll().forEach(discountData::add);
-        this.dataManager.setDiscountData(discountData);
-    }
 
 
 
@@ -136,9 +50,12 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
 
     boolean loaded = false;
-    private final long ownerId = 268932900;
+    @Value("${bot.owner}")
+    private long ownerId;
+    @Value("${bot.subowner}")
+    private long subOwner;
 
-    private final String channelId = "-1001379659811";
+    private final String channelId = "-1001788432377";
 
     private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
 
@@ -149,9 +66,8 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         if(update.hasMessage() && update.getMessage().hasText()){
 
-            if(update.getMessage().getChatId() == ownerId){
+            if(update.getMessage().getChatId() == ownerId || update.getMessage().getChatId() == subOwner){
                 if(!loaded && update.getMessage().getText().equals("/load")){
-                    loadData();
                     loaded = true;
                     return;
                 }
@@ -182,8 +98,11 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
                 throw new RuntimeException(e);
             }
 
+            List<String> text = Arrays.asList(update.getMessage().getText().split(" "));
+            String command = text.get(0);
+            text.remove(0);
             List<bot.service.Message> sms = manager.executeCommand
-                    (update, update.getMessage().getText());
+                    (update, command, text);
 
             try {
                 for(bot.service.Message sm: sms){
@@ -212,7 +131,7 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
 
         if(update.hasCallbackQuery()){
             if(update.getCallbackQuery().getData().equals("/channels")){
-                File file = new File(getClass().getClassLoader().getResource("channels.pdf").getFile());
+                File file = new File(File.separator + "root" + File.separator + "channels.pdf");
                 SendDocument sd = new SendDocument();
                 sd.setDocument(new InputFile(file));
                 sd.setChatId(update.getCallbackQuery().getMessage().getChatId());
@@ -294,29 +213,4 @@ public class BotSanya extends TelegramLongPollingBot implements DataUpdateListen
         msgsToDelete.put(chatId, new ArrayList<>());
     }
 
-    @Override
-    public void update(String action, long chatId) {
-        subsData = new ArrayList<>();
-        Subs s;
-        switch (action){
-            case "subscribe":
-                s = new Subs();
-                s.setID(chatId);
-                subsRepository.save(s);
-                subsRepository.findAll().forEach(subsData::add);
-                break;
-
-            case "unsubscribe":
-                s = new Subs();
-                s.setID(chatId);
-                subsRepository.delete(s);
-                subsRepository.findAll().forEach(subsData::add);
-                break;
-
-            case "reload":
-                reloadData();
-                break;
-        }
-        dataManager.setSubsData(subsData);
-    }
 }
