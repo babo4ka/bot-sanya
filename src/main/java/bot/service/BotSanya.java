@@ -28,14 +28,13 @@ public class BotSanya extends TelegramLongPollingBot{
 
     final CommandsManager manager;
 
-    @Autowired
     private DataManager dataManager;
-
 
 
     public BotSanya(BotConfig config){
         this.config = config;
         this.manager = new CommandsManager();
+        dataManager = DataManager.getInstance();
     }
 
     @Override
