@@ -45,16 +45,18 @@ public class ShowEquipmentCommand implements Command {
                         "Покупка б/у роутера - 1350 руб\n" +
                         "Покупка кам-модуля - 1300 руб\n" +
                         "Покупка тв-приставки - 2900 руб",
-                true
+                true,
+                ""
         ));
 
         return msgs;
     }
 
     @Override
-    public void setDataManager() {
-
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
+
 
     @Override
     public CommandType getCommandType() {

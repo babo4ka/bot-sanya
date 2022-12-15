@@ -80,7 +80,8 @@ public class ShowTariffsCommand implements Command {
                         chatId,
                         t.toString() + "\n" +
                                 "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу",
-                        true
+                        true,
+                        ""
                 ));
             }
         }else{
@@ -103,7 +104,8 @@ public class ShowTariffsCommand implements Command {
                             chatId,
                             t.toString() + "\n" +
                                     "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу",
-                            true
+                            true,
+                            ""
                     ));
                 }
             }
@@ -141,9 +143,15 @@ public class ShowTariffsCommand implements Command {
                 data,
                 chatId,
                 "Вы можете добавить или убрать теги для фильтрации тарифов",
-                true
+                true,
+                ""
         ));
         return msgs;
+    }
+
+    @Override
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
 
 

@@ -50,7 +50,13 @@ public class DataManager{
     DiscountRepository discountRepository;
     List<Discount> discountData = new ArrayList<>();
 
+    public List<Discount> getDiscountData() {
+        return discountData;
+    }
 
+    public Tariff getTariffById(long id){
+        return tariffRepository.findById(id).get();
+    }
 
     private static DataManager instance;
     public static DataManager getInstance(){
@@ -201,6 +207,10 @@ public class DataManager{
         }
     }
 
+    public List<Subs> getSubsData() {
+        return subsData;
+    }
+
     public void createDiscount(int id, int price){
         Discount d = new Discount();
         d.setPrice(price);
@@ -208,6 +218,10 @@ public class DataManager{
         discountRepository.save(d);
         discountData = new ArrayList<>();
         discountRepository.findAll().forEach(discountData::add);
+    }
+
+    public List<Tariff> getTariffsData() {
+        return tariffsData;
     }
 
     public void deleteDiscount(long id){

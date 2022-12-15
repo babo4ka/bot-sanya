@@ -26,9 +26,16 @@ public class Message {
         this.markable = markable;
     }
 
-    public Message(String type, boolean markable){
+    private String process;
+
+    public String getProcess(){
+        return process;
+    }
+
+    public Message(String type, boolean markable, String process){
         this.type = type;
         this.markable = markable;
+        this.process = process;
         switch (type){
             case MESSAGE:
                 this.sendMessage = new SendMessage();

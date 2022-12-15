@@ -1,17 +1,12 @@
 package bot.service.commandFactory.user.discounts;
 
-import bot.database.entites.Discount;
-import bot.database.entites.Tariff;
 import bot.service.DataManager;
 import bot.service.Message;
 import bot.service.TariffReady;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +52,8 @@ public class DiscountsCommand implements Command {
                         chatId,
                         t.toString() +
                                 "\n" + "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу",
-                        true
+                        true,
+                        ""
                 ));
             }
         }
@@ -76,7 +72,8 @@ public class DiscountsCommand implements Command {
                     data,
                     chatId,
                     "вернуться в начало",
-                    true
+                    true,
+                    ""
             ));
         }else{
             data = new ArrayList<>();
@@ -92,11 +89,17 @@ public class DiscountsCommand implements Command {
                     data,
                     chatId,
                     "На данный момент нет тарифов по акции!",
-                    true
+                    true,
+                    ""
             ));
         }
 
         return msgs;
+    }
+
+    @Override
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
 
 

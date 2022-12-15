@@ -18,7 +18,8 @@ public class MessageCreator {
             List<List<HashMap<String, String>>> data,
             long chatId,
             String text,
-            boolean markable
+            boolean markable,
+            String process
     ){
         SendMessage sendMessage = new SendMessage();
 
@@ -46,7 +47,7 @@ public class MessageCreator {
 
         sendMessage.setReplyMarkup(keyBoard);
 
-        Message message = new Message(Message.MESSAGE, markable);
+        Message message = new Message(Message.MESSAGE, markable, process);
         message.setSendMessage(sendMessage);
 
         return message;

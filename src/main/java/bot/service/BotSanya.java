@@ -58,6 +58,8 @@ public class BotSanya extends TelegramLongPollingBot{
 
     private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
 
+    private String processingCommand = "";
+
     @Override
     public void onUpdateReceived(Update update) {
 
@@ -70,25 +72,6 @@ public class BotSanya extends TelegramLongPollingBot{
                     loaded = true;
                     return;
                 }
-
-                if(update.getMessage().getText().startsWith("!")){
-                    try {
-                        deletePreviousMessages(update.getMessage().getChatId());
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    List<bot.service.Message> msgs = manager.executeCommand
-                            (update, ("/setDiscounts add " + update.getMessage().getText().substring(1)).split(" "));
-                    for(bot.service.Message m:msgs){
-                        try {
-                            sentMessage = execute(m.getSendMessage());
-                            msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
-                        } catch (TelegramApiException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    return;
-                }
             }
 
             try {
@@ -97,11 +80,19 @@ public class BotSanya extends TelegramLongPollingBot{
                 throw new RuntimeException(e);
             }
 
+
+
             List<String> text = Arrays.asList(update.getMessage().getText().split(" "));
-            String command = text.get(0);
-            text.remove(0);
-            List<bot.service.Message> sms = manager.executeCommand
-                    (update, command, text);
+            List<bot.service.Message> sms;
+            if(!processingCommand.equals("")){
+                sms = manager.processCommand(update, processingCommand, text);
+            }else{
+                String command = text.get(0);
+                text.remove(0);
+                sms = manager.executeCommand
+                        (update, command, text);
+            }
+
 
             try {
                 for(bot.service.Message sm: sms){
@@ -121,6 +112,7 @@ public class BotSanya extends TelegramLongPollingBot{
                             break;
                     }
 
+                    processingCommand = sm.getProcess();
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -169,6 +161,7 @@ public class BotSanya extends TelegramLongPollingBot{
                                     msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                                 break;
                         }
+                        processingCommand = sm.getProcess();
                     }
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);

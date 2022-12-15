@@ -9,6 +9,7 @@ import java.util.List;
 public interface Command{
     String[] getArgs();
     List<Message> execute(Update update, List<String> arguments);
+    List<Message> process(Update update, List<String> arguments);
     CommandType getCommandType();
     String getName();
 }

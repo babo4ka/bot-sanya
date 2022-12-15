@@ -1,18 +1,15 @@
 package bot.service.commandFactory.user.subscribe;
 
 import bot.service.DataManager;
-import bot.service.DataUpdateListener;
 import bot.service.Message;
-import bot.service.Observable;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class SubscribeCommand implements Command{
 
@@ -63,10 +60,16 @@ public class SubscribeCommand implements Command{
                 chatId,
                 DataManager.getInstance().isSub(chatId)?"&#9989;Отлично! Я буду держать Вас в курсе!"
                         :"&#9989;Хорошо, я не буду Вам ничего присылать, но вы можете в любой момент подписаться снова!",
-                true
+                true,
+                ""
         ));
 
         return msgs;
+    }
+
+    @Override
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
 
     @Override

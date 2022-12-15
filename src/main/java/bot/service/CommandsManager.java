@@ -62,6 +62,9 @@ public class CommandsManager {
         return commands.get(command).execute(update, arguments);
     }
 
+    public List<Message> processCommand(Update update, String command, List<String> arguments){
+        return commands.get(command).process(update, arguments);
+    }
 
 
 

@@ -44,10 +44,16 @@ public class UnknownCommand implements Command {
                 data,
                 chatId,
                 "Я Вас не понимаю :(",
-                true
+                true,
+                ""
         ));
 
         return msgs;
+    }
+
+    @Override
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
 
     @Override

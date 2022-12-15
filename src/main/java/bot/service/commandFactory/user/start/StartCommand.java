@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +58,8 @@ public class StartCommand implements Command{
                 createData(chatId),
                 chatId,
                 info,
-                true
+                true,
+                ""
         ));
 
         if(chatId == ownerId){
@@ -77,7 +76,8 @@ public class StartCommand implements Command{
                     data,
                     ownerId,
                     "Служебные команды",
-                    true
+                    true,
+                    ""
             ));
         }
 
@@ -85,9 +85,10 @@ public class StartCommand implements Command{
     }
 
     @Override
-    public void setDataManager() {
-
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
+
 
     @Override
     public CommandType getCommandType() {
@@ -146,56 +147,6 @@ public class StartCommand implements Command{
         return data;
     }
 
-    private InlineKeyboardMarkup setKeyboard(long chatId){
-        InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
-
-        List<InlineKeyboardButton> rows = new ArrayList<>();
-        List<List<InlineKeyboardButton>> btns = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ПОКАЖИ ВСЕ ТАРИФЫ")
-                .callbackData("/showTariffs")
-                .build());
-        btns.add(rows);
-        rows = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ПОКАЖИ АКЦИОННЫЕ ТАРИФЫ")
-                .callbackData("/discounts")
-                .build());
-        btns.add(rows);
-        rows = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ПОКУПКА ОБОРУДОВАНИЯ")
-                .callbackData("/equip")
-                .build());
-        btns.add(rows);
-        rows = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text(dataManager.isSub(chatId)?"ОТПИСАТЬСЯ ОТ РАССЫЛКИ ИЗ НОВОСТНОГО КАНАЛА":"ПОДПИСАТЬСЯ НА РАССЫЛКУ ИЗ НОВОСТНОГО КАНАЛА")
-                .callbackData("/subscribe")
-                .build());
-        btns.add(rows);
-        rows = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text("СПИСОК КАНАЛОВ")
-                .callbackData("/channels")
-                .build());
-        btns.add(rows);
-        rows = new ArrayList<>();
-
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ ПО ВСЕМ ТАРИФАМ")
-                .callbackData("/consultation alltariffs")
-                .build());
-        btns.add(rows);
-
-        keyBoard.setKeyboard(btns);
-        return keyBoard;
-    }
 
     @Override
     public String getName() {

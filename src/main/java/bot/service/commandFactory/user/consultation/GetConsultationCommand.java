@@ -58,11 +58,12 @@ public class GetConsultationCommand implements Command {
                 data,
                 chatId,
                 "&#9989;Отлично, я свяжусь с Вами в телеграме в ближайшее время!",
-                true
+                true,
+                ""
         ));
 
 
-        Message msg_s = new Message(Message.MESSAGE, false);
+        Message msg_s = new Message(Message.MESSAGE, false, "");
         msg_s.setSendMessage(messageForSanya(update.hasMessage()?update.getMessage().getFrom().getUserName():
                     update.getCallbackQuery().getFrom().getUserName(), tariffName));
         msgs.add(msg_s);
@@ -70,9 +71,10 @@ public class GetConsultationCommand implements Command {
     }
 
     @Override
-    public void setDataManager() {
-
+    public List<Message> process(Update update, List<String> arguments) {
+        return null;
     }
+
 
     @Override
     public CommandType getCommandType() {
