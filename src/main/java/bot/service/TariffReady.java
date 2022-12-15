@@ -12,6 +12,7 @@ public class TariffReady {
     private final String name;
     private final int price;
     private final String shortDesc;
+    private final long tariff_id;
 
 
     public String getName() {
@@ -48,6 +49,11 @@ public class TariffReady {
     }
 
     private boolean hasDiscount;
+
+    public boolean isHasDiscount() {
+        return hasDiscount;
+    }
+
     private int discountPrice;
 
     private TariffReady(TariffBuilder builder) {
@@ -60,6 +66,7 @@ public class TariffReady {
         this.tags = builder.tags;
         this.hasDiscount = builder.hasDiscount;
         this.discountPrice = builder.discountPrice;
+        this.tariff_id = builder.tariff_id;
     }
 
     public String toString(){
@@ -99,6 +106,7 @@ public class TariffReady {
         private final String name;
         private final int price;
         private final String shortDesc;
+        private final long tariff_id;
 
         private List<Equip> equip;
         private List<Extra> extra;
@@ -107,10 +115,11 @@ public class TariffReady {
         private boolean hasDiscount;
         private int discountPrice;
 
-        public TariffBuilder(String name, int price, String shortDesc) {
+        public TariffBuilder(String name, int price, String shortDesc, long tariff_id) {
             this.name = name;
             this.price = price;
             this.shortDesc = shortDesc;
+            this.tariff_id = tariff_id;
         }
 
         public TariffBuilder equip(List<Equip> equip){

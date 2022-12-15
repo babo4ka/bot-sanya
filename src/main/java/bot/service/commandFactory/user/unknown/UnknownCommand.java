@@ -2,6 +2,7 @@ package bot.service.commandFactory.user.unknown;
 
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
+import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class UnknownCommand implements Command {
@@ -20,35 +22,32 @@ public class UnknownCommand implements Command {
         return new String[0];
     }
 
+    MessageCreator creator = new MessageCreator();
+
     @Override
-    public List<Message> execute(Update update, String... args) {
+    public List<Message> execute(Update update, List<String> arguments) {
         List<Message> msgs = new ArrayList<>();
-        SendMessage sm = new SendMessage();
-        sm.setText("Я Вас не понимаю :(");
-        sm.setChatId(String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()));
 
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> rows = new ArrayList<>();
-        List<List<InlineKeyboardButton>> btns = new ArrayList<>();
+        long chatId = update.hasMessage()?update.getMessage().getChatId()
+                :update.getCallbackQuery().getMessage().getChatId();
 
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ВЕРНУТЬСЯ В НАЧАЛО")
-                .callbackData("/start").build());
-        btns.add(rows);
+        List<List<HashMap<String, String>>> data = new ArrayList<>();
+        List<HashMap<String, String>> btns = new ArrayList<>();
 
-        keyboardMarkup.setKeyboard(btns);
-        sm.enableMarkdown(true);
-        sm.setReplyMarkup(keyboardMarkup);
-        Message msg = new Message(Message.MESSAGE, true);
-        msg.setSendMessage(sm);
-        msgs.add(msg);
+        btns.add(new HashMap<>(){{
+            put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
+            put("text", "/start");
+        }});
+        data.add(btns);
+
+        msgs.add(creator.createTextMessage(
+                data,
+                chatId,
+                "Я Вас не понимаю :(",
+                true
+        ));
 
         return msgs;
-    }
-
-    @Override
-    public void setDataManager() {
-
     }
 
     @Override
@@ -56,10 +55,6 @@ public class UnknownCommand implements Command {
         return CommandType.USER;
     }
 
-    @Override
-    public void setArgs(String... args) {
-
-    }
 
     @Override
     public String getName() {

@@ -6,6 +6,7 @@ import bot.service.DataUpdateListener;
 import bot.service.Message;
 import bot.service.TariffReady;
 import bot.service.commandFactory.CommandType;
+import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShowTariffsCommand implements Command {
@@ -47,113 +49,114 @@ public class ShowTariffsCommand implements Command {
         return all;
     }
 
+    MessageCreator creator = new MessageCreator();
+
     @Override
-    public List<Message> execute(Update update, String... args) {
+    public List<Message> execute(Update update, List<String> arguments) {
         List<Message> msgs = new ArrayList<>();
 
+        long chatId = update.hasMessage()?update.getMessage().getChatId()
+                :update.getCallbackQuery().getMessage().getChatId();
+
+        List<List<HashMap<String, String>>> data;
+        List<HashMap<String, String>> btns;
 
         List<TariffReady> tr = DataManager.getInstance().getAlltariffs();
-        if(args.length == 1){
+
+        if(arguments.size() == 0){
             choosedTags.clear();
             for(TariffReady t:tr){
-                Message msg = new Message(Message.MESSAGE, true);
-                msg.setSendMessage(setMessageToSend
-                        (String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()),
-                                t));
-                msgs.add(msg);
+                data = new ArrayList<>();
+                btns = new ArrayList<>();
+
+                btns.add(new HashMap<>(){{
+                    put("text", "ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ");
+                    put("callback", "/consultation " + t.getName());
+                }});
+                data.add(btns);
+
+                msgs.add(creator.createTextMessage(
+                        data,
+                        chatId,
+                        t.toString() + "\n" +
+                                "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу",
+                        true
+                ));
             }
         }else{
-            if(choosedTags.contains(args[1]) && args[1] != null)choosedTags.remove(args[1]);
-            else choosedTags.add(args[1]);
+            if(choosedTags.contains(arguments.get(0)))choosedTags.remove(arguments.get(0));
+            else choosedTags.add(arguments.get(0));
 
             for(TariffReady t:tr){
                 if(checkTags(t)){
-                    Message msg = new Message(Message.MESSAGE, true);
-                    msg.setSendMessage(setMessageToSend
-                            (String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()),
-                                    t));
-                    msgs.add(msg);
+                    data = new ArrayList<>();
+                    btns = new ArrayList<>();
+
+                    btns.add(new HashMap<>(){{
+                        put("text", "ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ");
+                        put("callback", "/consultation " + t.getName());
+                    }});
+                    data.add(btns);
+
+                    msgs.add(creator.createTextMessage(
+                            data,
+                            chatId,
+                            t.toString() + "\n" +
+                                    "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу",
+                            true
+                    ));
                 }
             }
         }
 
-        SendMessage tagChoose = new SendMessage();
-        tagChoose.setText("Вы можете добавить или убрать теги для фильтрации тарифов");
-        tagChoose.setChatId(String.valueOf(update.hasMessage()?update.getMessage().getChatId():update.getCallbackQuery().getMessage().getChatId()));
-        tagChoose.enableMarkdown(true);
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> btns = new ArrayList<>();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("wifi")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "WIFI")
-                .callbackData("/showTariffs wifi").build());
-        rows.add(btns);
+        data = new ArrayList<>();
         btns = new ArrayList<>();
-        btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("tv")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "TV")
-                .callbackData("/showTariffs tv").build());
-        rows.add(btns);
+
+        btns.add(new HashMap<>(){{
+            put("text", choosedTags.contains("wifi")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("callback", "/showTariffs wifi");
+        }});
+        data.add(btns);
         btns = new ArrayList<>();
-        btns.add(new InlineKeyboardButton().builder()
-                .text((choosedTags.contains("mobile")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ") + "MOBILE")
-                .callbackData("/showTariffs mobile").build());
-        rows.add(btns);
+        btns.add(new HashMap<>(){{
+            put("text", choosedTags.contains("tv")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("callback", "/showTariffs tv");
+        }});
+        data.add(btns);
         btns = new ArrayList<>();
-        btns.add(new InlineKeyboardButton().builder()
-                .text("ВЕРНУТЬСЯ В НАЧАЛО")
-                .callbackData("/start").build());
-        rows.add(btns);
-        keyboardMarkup.setKeyboard(rows);
-        tagChoose.setReplyMarkup(keyboardMarkup);
-        Message msg = new Message(Message.MESSAGE, true);
-        msg.setSendMessage(tagChoose);
-        msgs.add(msg);
+        btns.add(new HashMap<>(){{
+            put("text", choosedTags.contains("mobile")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("callback", "/showTariffs mobile");
+        }});
+        data.add(btns);
+        btns = new ArrayList<>();
+
+        btns.add(new HashMap<>(){{
+            put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
+            put("callback", "/start");
+        }});
+        data.add(btns);
+
+        msgs.add(creator.createTextMessage(
+                data,
+                chatId,
+                "Вы можете добавить или убрать теги для фильтрации тарифов",
+                true
+        ));
         return msgs;
     }
 
-    @Override
-    public void setDataManager() {
-
-    }
 
     @Override
     public CommandType getCommandType() {
         return CommandType.USER;
     }
 
-    private SendMessage setMessageToSend(String chatId, TariffReady tr){
-        SendMessage sm = new SendMessage();
 
-        sm.setChatId(chatId);
-        String text = tr.toString() + "\n" +
-                "Нажмите на кнопку ниже, и я с Вами свяжусь для консультации по этому тарифу";
-        sm.setText(text);
-
-        sm.enableMarkdown(true);
-
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> btns = new ArrayList<>();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        btns.add(new InlineKeyboardButton().builder()
-                .text("ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ")
-                .callbackData("/consultation " + tr.getName()).build());
-        rows.add(btns);
-
-        keyboardMarkup.setKeyboard(rows);
-        sm.setReplyMarkup(keyboardMarkup);
-        sm.setParseMode("HTML");
-        return sm;
-    }
-
-
-    @Override
-    public void setArgs(String... args) {
-    }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
 }

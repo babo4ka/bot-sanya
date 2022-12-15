@@ -80,13 +80,6 @@ public class DataManager{
         discountRepository.findAll().forEach(discountData::add);
 
         subsRepository.findAll().forEach(subsData::add);
-
-
-        String[] args = new String[alltariffs.size()];
-
-        for(int i=0;i<args.length;i++){
-            args[i] = alltariffs.get(i).getName();
-        }
     }
 
 
@@ -103,7 +96,7 @@ public class DataManager{
     }
 
 
-    private int hasDiscount(long id){
+    public int hasDiscount(long id){
         int has = -1;
         for(Discount d: discountData){
             if(d.getTariff_id() == id){
@@ -175,7 +168,7 @@ public class DataManager{
             }
 
             TariffReady.TariffBuilder builder = new TariffReady.TariffBuilder(
-                    tariff.getName(), tariff.getPrice(), tariff.getShortDesc()
+                    tariff.getName(), tariff.getPrice(), tariff.getShortDesc(), tariff.getID()
             ).equip(equip).extra(extra).services(services).tags(tags);
 
             int disc = hasDiscount(tariff.getID());

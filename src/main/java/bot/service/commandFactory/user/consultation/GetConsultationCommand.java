@@ -17,26 +17,16 @@ public class GetConsultationCommand implements Command {
 
     private final String name = "/consultation";
 
-    private List<String> tariffsArgs = new ArrayList<>();
-
-    public void setArgs(String...args){
-        for(int i=0;i< args.length;i++){
-            tariffsArgs.add(args[i]);
-        }
-    }
 
     @Value("${bot.owner}")
     private long ownerId;
     @Value("${bot.subowner}")
     private long subOwner;
 
-    public GetConsultationCommand(){
-        this.tariffsArgs.add("alltariffs");
-    }
 
     @Override
     public String[] getArgs() {
-        return this.tariffsArgs.toArray(new String[0]);
+        return new String[0];
     }
 
     MessageCreator creator = new MessageCreator();

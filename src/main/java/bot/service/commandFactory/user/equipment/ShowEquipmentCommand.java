@@ -2,13 +2,12 @@ package bot.service.commandFactory.user.equipment;
 
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
+import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShowEquipmentCommand implements Command {
@@ -20,33 +19,35 @@ public class ShowEquipmentCommand implements Command {
         return new String[0];
     }
 
+    MessageCreator creator = new MessageCreator();
+
     @Override
-    public List<Message> execute(Update update, String... args) {
+    public List<Message> execute(Update update, List<String> arguments) {
         List<Message> msgs = new ArrayList<>();
 
-        SendMessage sm = new SendMessage();
-        sm.setChatId(update.hasMessage()?String.valueOf(update.getMessage().getChatId())
-                :String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
-        sm.setText("Покупка нового роутера - 2500 руб\n" +
-                "Покупка б/у роутера - 1350 руб\n" +
-                "Покупка кам-модуля - 1300 руб\n" +
-                "Покупка тв-приставки - 2900 руб");
+        long chatId = update.hasMessage()?update.getMessage().getChatId()
+                :update.getCallbackQuery().getMessage().getChatId();
 
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> rows = new ArrayList<>();
-        List<List<InlineKeyboardButton>> btns = new ArrayList<>();
+        List<List<HashMap<String, String>>> data = new ArrayList<>();
+        List<HashMap<String, String>> btns = new ArrayList<>();
 
-        rows.add(new InlineKeyboardButton().builder()
-                .text("ВЕРНУТЬСЯ В НАЧАЛО")
-                .callbackData("/start").build());
-        btns.add(rows);
+        btns.add(new HashMap<>(){{
+            put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
+            put("callback", "/start");
+        }});
 
-        keyboardMarkup.setKeyboard(btns);
+        data.add(btns);
 
-        sm.setReplyMarkup(keyboardMarkup);
-        Message msg = new Message(Message.MESSAGE, true);
-        msg.setSendMessage(sm);
-        msgs.add(msg);
+        msgs.add(creator.createTextMessage(
+                data,
+                chatId,
+                "Покупка нового роутера - 2500 руб\n" +
+                        "Покупка б/у роутера - 1350 руб\n" +
+                        "Покупка кам-модуля - 1300 руб\n" +
+                        "Покупка тв-приставки - 2900 руб",
+                true
+        ));
+
         return msgs;
     }
 
@@ -60,10 +61,6 @@ public class ShowEquipmentCommand implements Command {
         return CommandType.USER;
     }
 
-    @Override
-    public void setArgs(String... args) {
-
-    }
 
     @Override
     public String getName() {

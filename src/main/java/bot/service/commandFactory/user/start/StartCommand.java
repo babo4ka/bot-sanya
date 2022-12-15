@@ -94,10 +94,6 @@ public class StartCommand implements Command{
         return CommandType.USER;
     }
 
-    @Override
-    public void setArgs(String... args) {
-
-    }
 
     private List<List<HashMap<String, String>>> createData(long chatId){
         List<List<HashMap<String, String>>> data = new ArrayList<>();

@@ -145,9 +145,13 @@ public class BotSanya extends TelegramLongPollingBot{
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
-                List<bot.service.Message> sms = manager.executeCommand(
-                        update, update.getCallbackQuery().getData().split(" ")
-                );
+
+                List<String> text = Arrays.asList(update.getMessage().getText().split(" "));
+                String command = text.get(0);
+                text.remove(0);
+                List<bot.service.Message> sms = manager.executeCommand
+                        (update, command, text);
+
                 try {
                     for(bot.service.Message sm: sms){
                         switch (sm.getType()){
@@ -174,7 +178,7 @@ public class BotSanya extends TelegramLongPollingBot{
 
         if(update.hasChannelPost()
                 && String.valueOf(update.getChannelPost().getChatId()).equals(channelId)){
-            List<bot.service.Message> sms = manager.executeCommand(update, "/sendPost");
+            List<bot.service.Message> sms = manager.executeCommand(update, "/sendPost", new ArrayList<>());
 
             for(bot.service.Message s: sms){
                 try {

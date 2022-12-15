@@ -36,9 +36,6 @@ public class CommandsManager {
         return commands.get(name);
     }
 
-    public void setArgs(String command, String... args){
-        commands.get(command).setArgs(args);
-    }
 
     public void setCommands(){
         commands.put("/start", createCommand("start").setCommand());
