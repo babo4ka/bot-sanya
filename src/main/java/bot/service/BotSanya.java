@@ -1,11 +1,6 @@
 package bot.service;
 
 import bot.config.BotConfig;
-import bot.database.entites.*;
-import bot.database.repositories.*;
-import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommand;
-import bot.service.commandFactory.user.subscribe.SubscribeCommand;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -34,7 +29,6 @@ public class BotSanya extends TelegramLongPollingBot{
     public BotSanya(BotConfig config){
         this.config = config;
         this.manager = new CommandsManager();
-        dataManager = DataManager.getInstance();
     }
 
     @Override
@@ -70,6 +64,7 @@ public class BotSanya extends TelegramLongPollingBot{
             if(update.getMessage().getChatId() == ownerId || update.getMessage().getChatId() == subOwner){
                 if(!loaded && update.getMessage().getText().equals("/load")){
                     loaded = true;
+                    DataManager.getInstance().loadData();
                     return;
                 }
             }
@@ -82,13 +77,12 @@ public class BotSanya extends TelegramLongPollingBot{
 
 
 
-            List<String> text = Arrays.asList(update.getMessage().getText().split(" "));
+            List<String> text = new ArrayList<>(Arrays.asList(update.getMessage().getText().split(" ")));
             List<bot.service.Message> sms;
             if(!processingCommand.equals("")){
                 sms = manager.processCommand(update, processingCommand, text);
             }else{
-                String command = text.get(0);
-                text.remove(0);
+                String command = text.remove(0);
                 sms = manager.executeCommand
                         (update, command, text);
             }
@@ -138,9 +132,9 @@ public class BotSanya extends TelegramLongPollingBot{
                     throw new RuntimeException(e);
                 }
 
-                List<String> text = Arrays.asList(update.getMessage().getText().split(" "));
-                String command = text.get(0);
-                text.remove(0);
+                List<String> text = new ArrayList<>(Arrays.asList(update.getCallbackQuery().getData().split(" ")));
+                String command = text.remove(0);
+                System.out.println(command);
                 List<bot.service.Message> sms = manager.executeCommand
                         (update, command, text);
 

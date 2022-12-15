@@ -4,10 +4,7 @@ import bot.service.Message;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +33,7 @@ public class UnknownCommand implements Command {
 
         btns.add(new HashMap<>(){{
             put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
-            put("text", "/start");
+            put("callback", "/start");
         }});
         data.add(btns);
 

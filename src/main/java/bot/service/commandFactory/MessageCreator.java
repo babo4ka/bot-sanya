@@ -36,12 +36,12 @@ public class MessageCreator {
         for(List<HashMap<String, String>> buttons: data){
 
             for(HashMap<String, String> button : buttons){
-                btns.add(new InlineKeyboardButton().builder().
-                        text(button.get("text"))
+                btns.add(new InlineKeyboardButton().builder()
+                        .text(button.get("text"))
                         .callbackData(button.get("callback")).build());
             }
             rows.add(btns);
-            rows = new ArrayList<>();
+            btns = new ArrayList<>();
         }
         keyBoard.setKeyboard(rows);
 

@@ -35,8 +35,6 @@ public class StartCommand implements Command{
         return new String[0];
     }
 
-    @Autowired
-    DataManager dataManager;
 
 
     @Value("${bot.owner}")
@@ -124,7 +122,7 @@ public class StartCommand implements Command{
         btns = new ArrayList<>();
 
         btns.add(new HashMap<String, String>(){{
-            put("text", dataManager.isSub(chatId)?"ОТПИСАТЬСЯ ОТ РАССЫЛКИ ИЗ НОВОСТНОГО КАНАЛА":"ПОДПИСАТЬСЯ НА РАССЫЛКУ ИЗ НОВОСТНОГО КАНАЛА");
+            put("text", DataManager.getInstance().isSub(chatId)?"ОТПИСАТЬСЯ ОТ РАССЫЛКИ ИЗ НОВОСТНОГО КАНАЛА":"ПОДПИСАТЬСЯ НА РАССЫЛКУ ИЗ НОВОСТНОГО КАНАЛА");
             put("callback", "/subscribe");
         }
         });

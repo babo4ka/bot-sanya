@@ -2,8 +2,6 @@ package bot.service;
 
 import bot.database.entites.*;
 import bot.database.repositories.*;
-import bot.service.commandFactory.staff.setDiscounts.SetDiscountsCommand;
-import bot.service.commandFactory.user.subscribe.SubscribeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,11 +64,10 @@ public class DataManager{
         return instance;
     }
     private DataManager(){
-        setAllTariffs();
+        loadData();
     }
 
-    @Autowired
-    private void loadData(){
+    public void loadData(){
         equipRepository.findAll().forEach(equipData::add);
         extraRepository.findAll().forEach(extraData::add);
         serviceRepository.findAll().forEach(serviceData::add);
@@ -86,6 +83,8 @@ public class DataManager{
         discountRepository.findAll().forEach(discountData::add);
 
         subsRepository.findAll().forEach(subsData::add);
+
+        setAllTariffs();
     }
 
 
