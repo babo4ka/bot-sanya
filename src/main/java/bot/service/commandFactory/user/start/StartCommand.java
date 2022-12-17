@@ -1,12 +1,11 @@
 package bot.service.commandFactory.user.start;
 
+import bot.service.BotSanya;
 import bot.service.DataManager;
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -35,14 +34,8 @@ public class StartCommand implements Command{
         return new String[0];
     }
 
-
-
-    @Value("${bot.owner}")
-    private long ownerId;
-    @Value("${bot.subowner}")
-    private long subOwner;
-
     MessageCreator creator = new MessageCreator();
+
 
     @Override
     public List<Message> execute(Update update, List<String> arguments) {
@@ -60,7 +53,7 @@ public class StartCommand implements Command{
                 ""
         ));
 
-        if(chatId == ownerId){
+        if(chatId == BotSanya.getOwnerId()){
             List<List<HashMap<String, String>>> data = new ArrayList<>();
             List<HashMap<String, String>> btns = new ArrayList<>();
 
@@ -72,7 +65,7 @@ public class StartCommand implements Command{
 
             msgs.add(creator.createTextMessage(
                     data,
-                    ownerId,
+                    BotSanya.getOwnerId(),
                     "Служебные команды",
                     true,
                     ""

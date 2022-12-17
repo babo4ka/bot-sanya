@@ -1,10 +1,10 @@
 package bot.service.commandFactory.user.consultation;
 
+import bot.service.BotSanya;
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,12 +16,6 @@ import java.util.List;
 public class GetConsultationCommand implements Command {
 
     private final String name = "/consultation";
-
-
-    @Value("${bot.owner}")
-    private long ownerId;
-    @Value("${bot.subowner}")
-    private long subOwner;
 
 
     @Override
@@ -41,11 +35,14 @@ public class GetConsultationCommand implements Command {
         List<List<HashMap<String, String>>> data = new ArrayList<>();
         List<HashMap<String, String>> btns = new ArrayList<>();
 
-        String tariffName = "";
+        String tariffName = arguments.get(0);
 
-        for(String s : arguments){
-            tariffName = String.join(" ", tariffName, s);
+        if(arguments.size() > 1){
+            for(int i=1;i<arguments.size();i++){
+                tariffName = String.join(" ", tariffName, arguments.get(i));
+            }
         }
+
 
         btns.add(new HashMap<>(){{
             put("text", "ВЕРНУТЬСЯ В НАЧАЛО");
@@ -84,7 +81,7 @@ public class GetConsultationCommand implements Command {
 
     private SendMessage messageForSanya(String clientUserName, String tariffName){
         SendMessage sm = new SendMessage();
-        sm.setChatId(String.valueOf(ownerId));
+        sm.setChatId(String.valueOf(BotSanya.getOwnerId()));
         sm.setText(((tariffName.equals("alltariffs")?"Консультация по всем тарифам":"Консультация по тарифу " + tariffName) + "\n" +
                 "@" + clientUserName));
 

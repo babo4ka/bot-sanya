@@ -1,7 +1,7 @@
 package bot.service;
 
 import bot.config.BotConfig;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -23,12 +23,18 @@ public class BotSanya extends TelegramLongPollingBot{
 
     final CommandsManager manager;
 
-    private DataManager dataManager;
+    public static long ownerId;
+    public static long subOwner;
 
+    public static long getOwnerId(){return ownerId;}
+
+    public static long getSubOwner(){return subOwner;}
 
     public BotSanya(BotConfig config){
         this.config = config;
         this.manager = new CommandsManager();
+        ownerId = config.getOwnerId();
+        subOwner = config.getSubOwner();
     }
 
     @Override
@@ -42,17 +48,17 @@ public class BotSanya extends TelegramLongPollingBot{
     }
 
 
-    boolean loaded = false;
-    @Value("${bot.owner}")
-    private long ownerId;
-    @Value("${bot.subowner}")
-    private long subOwner;
-
     private final String channelId = "-1001788432377";
 
     private Map<Long, List<Integer>> msgsToDelete = new HashMap<>();
 
     private String processingCommand = "";
+
+    @Autowired
+    public void setDataManager(DataManager dataManager){
+        DataManager.setInstance(dataManager);
+        DataManager.getInstance().loadData();
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -61,13 +67,13 @@ public class BotSanya extends TelegramLongPollingBot{
 
         if(update.hasMessage() && update.getMessage().hasText()){
 
-            if(update.getMessage().getChatId() == ownerId || update.getMessage().getChatId() == subOwner){
-                if(!loaded && update.getMessage().getText().equals("/load")){
-                    loaded = true;
-                    DataManager.getInstance().loadData();
-                    return;
-                }
-            }
+//            if(update.getMessage().getChatId() == ownerId || update.getMessage().getChatId() == subOwner){
+//                if(!loaded && update.getMessage().getText().equals("/load")){
+//                    loaded = true;
+//                    DataManager.getInstance().loadData();
+//                    return;
+//                }
+//            }
 
             try {
                 deletePreviousMessages(update.getMessage().getChatId());
@@ -134,7 +140,6 @@ public class BotSanya extends TelegramLongPollingBot{
 
                 List<String> text = new ArrayList<>(Arrays.asList(update.getCallbackQuery().getData().split(" ")));
                 String command = text.remove(0);
-                System.out.println(command);
                 List<bot.service.Message> sms = manager.executeCommand
                         (update, command, text);
 
@@ -155,6 +160,7 @@ public class BotSanya extends TelegramLongPollingBot{
                                     msgsToDelete.get(sentMessage.getChatId()).add(sentMessage.getMessageId());
                                 break;
                         }
+                        System.out.println("command in provcess: " + sm.getProcess());
                         processingCommand = sm.getProcess();
                     }
                 } catch (TelegramApiException e) {

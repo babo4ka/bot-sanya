@@ -25,6 +25,7 @@ public class SubscribeCommand implements Command{
     MessageCreator creator = new MessageCreator();
 
 
+
     @Override
     public List<Message> execute(Update update, List<String> arguments) {
         List<Message> msgs = new ArrayList<>();

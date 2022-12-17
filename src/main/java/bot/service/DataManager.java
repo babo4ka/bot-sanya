@@ -57,14 +57,16 @@ public class DataManager{
     }
 
     private static DataManager instance;
-    public static DataManager getInstance(){
-        if(instance == null)
-            instance = new DataManager();
 
+    public static DataManager getInstance(){
         return instance;
     }
-    private DataManager(){
-        loadData();
+
+    public static void setInstance(DataManager dataManager){
+        instance = dataManager;
+    }
+
+    public DataManager(){
     }
 
     public void loadData(){
@@ -113,7 +115,7 @@ public class DataManager{
         return has;
     }
 
-    @Autowired
+
     private void setAllTariffs(){
         alltariffs = new ArrayList<>();
         for(Tariff tariff : tariffsData){

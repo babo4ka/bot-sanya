@@ -2,20 +2,14 @@ package bot.service.commandFactory.user.tariffs;
 
 import bot.database.entites.Tags;
 import bot.service.DataManager;
-import bot.service.DataUpdateListener;
 import bot.service.Message;
 import bot.service.TariffReady;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +25,7 @@ public class ShowTariffsCommand implements Command {
     }
 
     private List<String> choosedTags = new ArrayList<>();
+
 
     private boolean checkTags(TariffReady tr){
         boolean all = true;
@@ -115,19 +110,19 @@ public class ShowTariffsCommand implements Command {
         btns = new ArrayList<>();
 
         btns.add(new HashMap<>(){{
-            put("text", choosedTags.contains("wifi")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("text", choosedTags.contains("wifi")?"УБРАТЬ ТЕГ WIFI":"ДОБАВИТЬ ТЕГ WIFI");
             put("callback", "/showTariffs wifi");
         }});
         data.add(btns);
         btns = new ArrayList<>();
         btns.add(new HashMap<>(){{
-            put("text", choosedTags.contains("tv")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("text", choosedTags.contains("tv")?"УБРАТЬ ТЕГ TV":"ДОБАВИТЬ ТЕГ TV");
             put("callback", "/showTariffs tv");
         }});
         data.add(btns);
         btns = new ArrayList<>();
         btns.add(new HashMap<>(){{
-            put("text", choosedTags.contains("mobile")?"УБРАТЬ ТЕГ ":"ДОБАВИТЬ ТЕГ ");
+            put("text", choosedTags.contains("mobile")?"УБРАТЬ ТЕГ MOBILE":"ДОБАВИТЬ ТЕГ MOBILE");
             put("callback", "/showTariffs mobile");
         }});
         data.add(btns);

@@ -2,19 +2,15 @@ package bot.service.commandFactory.staff.setDiscounts;
 
 import bot.database.entites.Discount;
 import bot.database.entites.Tariff;
+import bot.service.BotSanya;
 import bot.service.DataManager;
-import bot.service.DataUpdateListener;
 import bot.service.Message;
-import bot.service.Observable;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +26,6 @@ public class SetDiscountsCommand implements Command{
         return new String[0];
     }
 
-
-    @Value("${bot.owner}")
-    private long ownerId;
-    @Value("${bot.subowner}")
-    private long subOwner;
 
 
     MessageCreator creator = new MessageCreator();
@@ -86,7 +77,7 @@ public class SetDiscountsCommand implements Command{
 
         StringBuilder builder = new StringBuilder();
 
-        if(chatId != ownerId){
+        if(chatId != BotSanya.getOwnerId()){
             btns = new ArrayList<>();
             data = new ArrayList<>();
 
@@ -160,6 +151,13 @@ public class SetDiscountsCommand implements Command{
 
                             }
                         }
+
+                        btns = new ArrayList<>();
+                        btns.add(new HashMap<>() {{
+                            put("text", "НАЗАД");
+                            put("callback", "/setDiscounts");
+                        }});
+                        data.add(btns);
 
                         msgs.add(creator.createTextMessage(
                                 data,
