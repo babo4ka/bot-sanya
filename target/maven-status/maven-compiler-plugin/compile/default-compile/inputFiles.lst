@@ -47,6 +47,7 @@ C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\database\ent
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\database\entites\Tags.java
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\service\commandFactory\user\consultation\GetConsultationCommandFactory.java
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\database\repositories\TagsRepository.java
+C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\service\commandFactory\MessageCreator.java
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\service\commandFactory\interfaces\CommandFactory.java
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\service\commandFactory\user\subscribe\SubscribeCommand.java
 C:\Users\evgeh\OneDrive\Desktop\byzabot\Bot_sanya\src\main\java\bot\service\commandFactory\user\subscribe\SubscribeCommandFactory.java

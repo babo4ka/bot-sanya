@@ -77,7 +77,7 @@ public class SetDiscountsCommand implements Command{
 
         StringBuilder builder = new StringBuilder();
 
-        if(chatId != BotSanya.getOwnerId()){
+        if(chatId != BotSanya.getOwnerId() && chatId != BotSanya.getSubOwner()){
             btns = new ArrayList<>();
             data = new ArrayList<>();
 
@@ -119,11 +119,15 @@ public class SetDiscountsCommand implements Command{
                 data.add(btns);
 
 
-
-                for(Discount d : DataManager.getInstance().getDiscountData()){
-                    Tariff t = DataManager.getInstance().getTariffById((long)d.getTariff_id());
-                    builder.append(t.getName() + " " + d.getPrice() + "\n");
+                if(DataManager.getInstance().getDiscountData().size() != 0){
+                    for(Discount d : DataManager.getInstance().getDiscountData()){
+                        Tariff t = DataManager.getInstance().getTariffById((long)d.getTariff_id());
+                        builder.append(t.getName() + " " + d.getPrice() + "\n");
+                    }
+                }else{
+                    builder.append("Нет акционных тарифов");
                 }
+
 
                 msgs.add(creator.createTextMessage(
                         data,

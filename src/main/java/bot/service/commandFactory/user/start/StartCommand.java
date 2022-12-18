@@ -51,7 +51,7 @@ public class StartCommand implements Command{
                 ""
         ));
 
-        if(chatId == BotSanya.getOwnerId()){
+        if(chatId == BotSanya.getOwnerId() || chatId == BotSanya.getSubOwner()){
             List<List<HashMap<String, String>>> data = new ArrayList<>();
             List<HashMap<String, String>> btns = new ArrayList<>();
 
