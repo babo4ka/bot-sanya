@@ -9,7 +9,6 @@ import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
 import org.springframework.context.annotation.PropertySource;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ public class SetDiscountsCommand implements Command{
             put("text", "НАЗАД");
             put("callback", "/setDiscounts");
         }});
+        data.add(btns);
 
         msgs.add(creator.createTextMessage(
                 data,
@@ -164,7 +164,7 @@ public class SetDiscountsCommand implements Command{
                                 chatId,
                                 builder.toString(),
                                 true,
-                                name
+                                ""
                         ));
                         break;
 
@@ -175,15 +175,22 @@ public class SetDiscountsCommand implements Command{
                         builder.append("Выбери номер тарифа для того, чтобы убрать акцию\n");
 
                         for (Discount d : DataManager.getInstance().getDiscountData()) {
-                            Tariff t = DataManager.getInstance().getTariffById((long) d.getTariff_id());
-                            builder.append(d.getTariff_id() + " - " + t.getName() + " " + d.getPrice() + "\n");
+                            Tariff t = DataManager.getInstance().getTariffById(d.getTariff_id());
+                            builder.append(d.getID() + " - " + t.getName() + " " + d.getPrice() + "\n");
                             btns = new ArrayList<>();
                             btns.add(new HashMap<>() {{
-                                put("text", String.valueOf(d.getTariff_id()));
-                                put("callback", "/setDiscounts remove " + d.getTariff_id());
+                                put("text", String.valueOf(d.getID()));
+                                put("callback", "/setDiscounts remove " + d.getID());
                             }});
                             data.add(btns);
                         }
+
+                        btns = new ArrayList<>();
+                        btns.add(new HashMap<>() {{
+                            put("text", "НАЗАД");
+                            put("callback", "/setDiscounts");
+                        }});
+                        data.add(btns);
 
                         msgs.add(creator.createTextMessage(
                                 data,
@@ -198,14 +205,19 @@ public class SetDiscountsCommand implements Command{
                 }else if(arguments.size() == 2) {
                     switch (arguments.get(0)) {
                         case "add":
-                            SendMessage sendMessage = new SendMessage();
-                            sendMessage.enableMarkdown(true);
-                            sendMessage.setChatId(chatId);
-                            sendMessage.setText("Введи новую цену для тарифа");
-                            sendMessage.setParseMode("HTML");
-                            Message message = new Message(Message.MESSAGE, true, "");
-                            message.setSendMessage(sendMessage);
-                            msgs.add(message);
+                            btns.add(new HashMap<>() {{
+                                put("text", "НАЗАД");
+                                put("callback", "/setDiscounts");
+                            }});
+                            data.add(btns);
+
+                            msgs.add(creator.createTextMessage(
+                                    data,
+                                    chatId,
+                                    "Введи новую цену для тарифа",
+                                    true,
+                                    name
+                            ));
 
                             tariffIdToCreateDiscount = Integer.parseInt(arguments.get(1));
                             step++;

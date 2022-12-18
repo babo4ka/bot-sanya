@@ -6,14 +6,12 @@ import bot.service.Message;
 import bot.service.commandFactory.CommandType;
 import bot.service.commandFactory.MessageCreator;
 import bot.service.commandFactory.interfaces.Command;
-import org.springframework.context.annotation.PropertySource;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@PropertySource("app.properties")
 public class StartCommand implements Command{
 
     private final String name = "/start";

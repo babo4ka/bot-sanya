@@ -63,7 +63,6 @@ public class CommandsManager {
     }
 
     public List<Message> processCommand(Update update, String command, List<String> arguments){
-        System.out.println("processing........" + command);
         return commands.get(command).process(update, arguments);
     }
 

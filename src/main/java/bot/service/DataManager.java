@@ -219,6 +219,12 @@ public class DataManager{
         discountRepository.save(d);
         discountData = new ArrayList<>();
         discountRepository.findAll().forEach(discountData::add);
+        for(TariffReady tr: alltariffs){
+            if(tr.getTariff_id() == id){
+                tr.makeDiscount(price);
+                break;
+            }
+        }
     }
 
     public List<Tariff> getTariffsData() {
@@ -226,10 +232,16 @@ public class DataManager{
     }
 
     public void deleteDiscount(long id){
-        Discount d = new Discount();
         discountRepository.deleteById(id);
         discountData = new ArrayList<>();
         discountRepository.findAll().forEach(discountData::add);
+
+        for(TariffReady tr: alltariffs){
+            if(tr.getTariff_id() == (int)id){
+                tr.unmakeDiscount();
+                break;
+            }
+        }
     }
 
 

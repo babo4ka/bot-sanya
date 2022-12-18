@@ -1,6 +1,7 @@
 package bot.service.commandFactory.user.SendPostCommand;
 
 import bot.database.entites.Subs;
+import bot.service.BotSanya;
 import bot.service.DataManager;
 import bot.service.Message;
 import bot.service.commandFactory.CommandType;
@@ -25,8 +26,6 @@ public class SendPostCommand implements Command {
     }
 
 
-    private final String channelId = "-1001788432377";
-
     MessageCreator creator = new MessageCreator();
 
 
@@ -40,7 +39,7 @@ public class SendPostCommand implements Command {
         List<List<HashMap<String, String>>> data;
         List<HashMap<String, String>> btns;
 
-        if(!update.hasChannelPost() || !String.valueOf(update.getChannelPost().getChatId()).equals(channelId)){
+        if(!update.hasChannelPost() || !String.valueOf(update.getChannelPost().getChatId()).equals(BotSanya.getChannelId())){
             data = new ArrayList<>();
             btns = new ArrayList<>();
 

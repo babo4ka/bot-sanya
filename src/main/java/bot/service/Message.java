@@ -29,7 +29,7 @@ public class Message {
     private String process;
 
     public String getProcess(){
-        return process;
+        return this.process;
     }
 
     public Message(String type, boolean markable, String process){

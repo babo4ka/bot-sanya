@@ -54,7 +54,21 @@ public class TariffReady {
         return hasDiscount;
     }
 
+    public long getTariff_id() {
+        return tariff_id;
+    }
+
     private int discountPrice;
+
+    public void makeDiscount(int price){
+        this.discountPrice = price;
+        hasDiscount = true;
+    }
+
+    public void unmakeDiscount(){
+        discountPrice = 0;
+        hasDiscount = false;
+    }
 
     private TariffReady(TariffBuilder builder) {
         this.name = builder.name;
