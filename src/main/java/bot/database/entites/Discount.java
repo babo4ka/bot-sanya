@@ -3,6 +3,7 @@ package bot.database.entites;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Entity(name = "акционные_тарифы")
 public class Discount {
@@ -14,6 +15,16 @@ public class Discount {
     private int tariffId;
     @Column(name = "цена_по_акции")
     private int price;
+    @Column(name = "дата_окончания")
+    private Timestamp endDate;
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
 
     public long getID() {
         return ID;

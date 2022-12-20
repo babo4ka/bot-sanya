@@ -1,11 +1,8 @@
 package bot.service;
 
-import bot.database.entites.Equip;
-import bot.database.entites.Extra;
-import bot.database.entites.Service;
-import bot.database.entites.Tags;
+import bot.database.entites.*;
 
-import java.util.List;
+import java.util.*;
 
 public class TariffReady {
 
@@ -60,8 +57,13 @@ public class TariffReady {
 
     private int discountPrice;
 
-    public void makeDiscount(int price){
+    private Date endOfAction;
+
+    public Date getEndOfAction(){return this.endOfAction;}
+
+    public void makeDiscount(int price, Long end){
         this.discountPrice = price;
+        this.endOfAction = new Date(end);
         hasDiscount = true;
     }
 
@@ -69,6 +71,25 @@ public class TariffReady {
         discountPrice = 0;
         hasDiscount = false;
     }
+
+    private Map<Long, Timer> timersMap = new HashMap<>();
+
+
+    class DiscountDeleteTask extends TimerTask{
+
+        private long discountId;
+        public DiscountDeleteTask(long id){
+            this.discountId = id;
+        }
+
+        @Override
+        public void run() {
+            DataManager.getInstance().deleteDiscount(this.discountId);
+            timersMap.get(this.discountId).cancel();
+            timersMap.remove(this.discountId);
+        }
+    }
+
 
     private TariffReady(TariffBuilder builder) {
         this.name = builder.name;
@@ -81,6 +102,17 @@ public class TariffReady {
         this.hasDiscount = builder.hasDiscount;
         this.discountPrice = builder.discountPrice;
         this.tariff_id = builder.tariff_id;
+        this.endOfAction = builder.endOfAction;
+
+        if(builder.hasDiscount){
+            for(Discount d:DataManager.getInstance().getDiscountData()){
+                if(d.getTariff_id() == builder.tariff_id){
+                    Timer t = new Timer();
+                    t.schedule(new DiscountDeleteTask(d.getID()), builder.endOfAction);
+                    timersMap.put(d.getID(), t);
+                }
+            }
+        }
     }
 
     public String toString(){
@@ -128,6 +160,7 @@ public class TariffReady {
         private List<Tags> tags;
         private boolean hasDiscount;
         private int discountPrice;
+        private Date endOfAction;
 
         public TariffBuilder(String name, int price, String shortDesc, long tariff_id) {
             this.name = name;
@@ -156,9 +189,10 @@ public class TariffReady {
             return this;
         }
 
-        public TariffBuilder discount(int price){
+        public TariffBuilder discount(int price, Long end){
             this.hasDiscount = true;
             this.discountPrice = price;
+            this.endOfAction = new Date(end);
             return this;
         }
 

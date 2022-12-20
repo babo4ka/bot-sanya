@@ -5,7 +5,9 @@ import bot.database.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -180,7 +182,21 @@ public class DataManager{
 
             int disc = hasDiscount(tariff.getID());
             if(disc != -1){
-                builder.discount(disc);
+                long end = 0;
+                for(Discount d: discountData){
+                    if(d.getTariff_id() == tariff.getID()){
+                        end = d.getEndDate().getTime();
+
+                        if(new Date().getTime() >= end){
+                            deleteDiscount(d.getID());
+                        }else{
+                            builder.discount(disc, end);
+                        }
+
+                        break;
+                    }
+                }
+
             }
 
             alltariffs.add(builder.build());
@@ -212,16 +228,18 @@ public class DataManager{
         return subsData;
     }
 
-    public void createDiscount(int id, int price){
+    public void createDiscount(int id, int price, Timestamp date){
         Discount d = new Discount();
         d.setPrice(price);
         d.setTariff_id(id);
+        d.setEndDate(date);
+
         discountRepository.save(d);
         discountData = new ArrayList<>();
         discountRepository.findAll().forEach(discountData::add);
         for(TariffReady tr: alltariffs){
             if(tr.getTariff_id() == id){
-                tr.makeDiscount(price);
+                tr.makeDiscount(price, date.getTime());
                 break;
             }
         }
@@ -232,12 +250,13 @@ public class DataManager{
     }
 
     public void deleteDiscount(long id){
+        int tariffId = discountRepository.findById(id).get().getTariff_id();
         discountRepository.deleteById(id);
         discountData = new ArrayList<>();
         discountRepository.findAll().forEach(discountData::add);
 
         for(TariffReady tr: alltariffs){
-            if(tr.getTariff_id() == (int)id){
+            if(tr.getTariff_id() == (long)tariffId){
                 tr.unmakeDiscount();
                 break;
             }
