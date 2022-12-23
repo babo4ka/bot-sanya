@@ -42,6 +42,7 @@ bot\service\commandFactory\staff\setDiscounts\SetDiscountsCommand$8.class
 bot\service\commandFactory\CommandType.class
 bot\database\repositories\ServiceInterRepository.class
 bot\BotSanyaApp.class
+bot\service\TariffReady$DiscountDeleteTask.class
 bot\service\commandFactory\user\subscribe\SubscribeCommand$2.class
 bot\service\commandFactory\user\consultation\GetConsultationCommand.class
 bot\service\commandFactory\staff\setDiscounts\SetDiscountsCommand$11.class
