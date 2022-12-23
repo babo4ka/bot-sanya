@@ -1,4 +1,4 @@
 .idea/
 
-/app.properties
-/app-dev.properties
+/src/main/resources/app.properties
+/src/main/resources/app-dev.properties
